@@ -175,12 +175,7 @@ Based on the profile, adjust what you report: when a safety net is missing (no l
 
 ### Reference loading
 
-Load references **after** diffs are fetched. Reference files live in the `references/` folder of this skill. Resolve paths as follows:
-
-- **Cursor standard**: `~/.cursor/skills/frontend-code-review/references/` (or `.cursor/skills/frontend-code-review/references/` when the skill is installed in Cursor's skills directory)
-- **Repo clone / local skill**: `./references/` relative to the skill root (e.g. `skills/frontend-code-review/references/`)
-
-Apply rules based on changed file types. Deduplicate when multiple file types map to the same reference. All reference filenames below are loaded from the `references/` folder (e.g. `references/javascript-typescript.md`).
+Load references **after** diffs are fetched, using the paths in the tables below (e.g. `references/security.md`). Apply rules based on changed file types. Deduplicate when multiple file types map to the same reference.
 
 **Base (always)**: `references/security.md` + `references/code-quality.md`
 
