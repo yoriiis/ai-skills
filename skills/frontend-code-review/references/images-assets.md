@@ -34,7 +34,9 @@ When SVG is used in a **sprite** (e.g. `<symbol>` inside a shared `<svg>`):
 
 - **No fixed `width` and `height`** on the sprite symbol or use element — use `viewBox` only
 - Sizing controlled via CSS (`width`, `height` on the `<use>` reference or wrapper)
-- Sprite container: `aria-hidden="true"`, typically `style="position: absolute; width: 0; height: 0; overflow: hidden;"` to hide from layout
+- Sprite container: typically `style="position: absolute; width: 0; height: 0; overflow: hidden;"` to hide from layout
+
+> **Accessibility**: For SVG a11y (decorative vs meaningful icons, `aria-hidden`, `sr-only`, `focusable`), see `references/accessibility.md`.
 
 ### Questions to ask
 

@@ -58,13 +58,7 @@ Prefer modern ES6+ constructs when they improve readability or safety. Flag as *
 - **Nullish coalescing** (`??`) — use instead of `||` when `0`, `""`, `false` are valid values
 - **Destructuring** — for function parameters, return values, and variable declaration
 
-## Performance (JS Context)
-
-See `references/code-quality.md` for full performance checklist. In JS/TS, flag as **Important** when:
-
-- **Inefficient loops** — O(n²) patterns, unnecessary iterations, or redundant work inside loops
-- **Repeated DOM manipulation** — Layout thrashing (interleaving reads like `offsetHeight`/`getBoundingClientRect` with writes like `style.*`/`classList` in a loop). Batch reads first, then writes
-- **Heavy computation without memoization** — Pure functions called repeatedly with same inputs in hot paths (event handlers, render cycles) should be memoized
+> **Performance**: Front-end performance rules (loops, DOM manipulation, memoization, layout thrashing) are in `references/code-quality.md`. Load it when reviewing JS/TS for performance-related checks.
 
 ## Structured Units (Modules, Hooks, Classes)
 
@@ -165,14 +159,7 @@ Any function that returns a value must use a prefix indicating the return type. 
 
 - `getUser()` returns `{ user, metadata }` instead of just `user`
 
-## Error Handling
-
-**Strategy and logic** (swallowed exceptions, fallback UI, error propagation) → `references/code-quality.md` is the single source of truth.
-
-**Syntax only** — adapt to project conventions:
-
-- If the project uses `async/await`, prefer `try/catch` over chained `.catch()` for consistency
-- If the project uses `.catch()` on promises, follow that pattern
+> **Error handling**: Strategy, logic, syntax, and anti-patterns (swallowed exceptions, fallback UI, try/catch vs .catch) are defined in `references/code-quality.md` — use it as the single source of truth.
 
 ## JSDoc
 

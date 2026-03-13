@@ -48,6 +48,10 @@ Reference standards for Twig template review. Generic rules applicable to any Sy
 {{ isActive ? 'isActive' }}
 ```
 
+## Security (XSS)
+
+- **Contextual escaping**: Use Twig's auto-escaping and the appropriate escape context for each output — `|e('html')` for HTML content, `|e('html_attr')` for attributes, `|e('js')` for JS contexts, `|raw` only when the content is explicitly trusted and already sanitized. Prevents XSS when user-controlled or dynamic data is rendered.
+
 ## Component Structure
 
 - Avoid sub-sub-components: max 2 levels of nesting
