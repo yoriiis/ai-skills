@@ -17,6 +17,30 @@ Checklist for code quality review: error handling, front-end performance, bounda
 - Functions longer than ~30 lines should be extracted into smaller functions — suggest extraction and single-responsibility refactoring
 - Multiple nesting levels (3+) indicate a candidate for early returns or extraction
 
+> **SOLID Principle**: Single Responsibility Principle (SRP) — a function should do one thing well. If you need "and" to describe what a function does, split it.
+
+---
+
+## Architecture Principles
+
+**Single Responsibility Principle (SRP)**
+
+- A function should do only what its name indicates
+- See `references/javascript-typescript.md` for JS/TS detection patterns
+
+**Dependency Inversion Principle (DIP)**
+
+- Depend on abstractions, not concrete implementations
+- Inject dependencies via constructor/parameters
+- See `references/javascript-typescript.md` for JS/TS patterns
+
+**Design Patterns to Recognize (Flag as Suggestion)**
+
+- Tight coupling between components
+- God objects/classes that know too much
+- Deep inheritance hierarchies (prefer composition)
+- Feature envy
+
 ---
 
 ## Error Handling

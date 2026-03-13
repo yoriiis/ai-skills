@@ -25,14 +25,13 @@ Only apply if the project has a `tsconfig.json`. If the project is in plain JS, 
 
 ## Code Hygiene
 
-- No `console.log` / `console.info` / `console.debug` in production code
+- `console.log` / `console.info` / `console.debug` — **Minor** unless contains PII/secrets (then **Blocking**)
 - No commented-out code
 - Remove unused imports
-- Prefer `const` over `let`, never `var`
+- Prefer `const` over `let`, never `var` — **Suggestion** if linter present, **Important** if no linter
 - **Early returns** — prefer early return over nested `else` blocks; exit conditions early to keep the happy path readable
 - If a function takes more than 2 parameters, use destructuring syntax
 - Create descriptive named variables for timer values (not magic numbers)
-- A function must only do what its name says — single responsibility
 - Functions longer than ~30 lines or with multiple nesting levels should be extracted into smaller functions
 - Avoid code duplication — factor shared logic
 - No anonymous functions in event listeners — use named methods and `.bind(this)` in constructor. Enables proper `removeEventListener` and unit testing
@@ -74,6 +73,24 @@ export default class ComponentName {
 - Bind event handlers in constructor when they need `this` context
 - Order class methods logically for readability (constructor → init → addEvents → handlers → utilities)
 
+## Testability
+
+Write functions as if they will be tested—even if no tests exist.
+
+> **SOLID Principle**: Single Responsibility Principle (SRP) — a function should do only what its name indicates.
+
+**Flag as Important:**
+
+- Function with side effects not indicated by name (`getUser()` that also updates the database)
+- Function doing 2+ unrelated things (validation + API call + DOM manipulation)
+
+> **SOLID Principle**: Dependency Inversion Principle (DIP) — depend on abstractions, not concrete implementations.
+
+**Flag as Suggestion:**
+
+- Hard-coded imports/instantiation inside functions
+- Anonymous functions in event listeners (use named methods)
+
 ## JSX/TSX
 
 Check `package.json` for `react`, `preact`, or `jsx-dom`. All JSX-based frameworks use `className` (not `class`) for CSS classes — `class` is reserved in JavaScript; Biome/ESLint enforce `className`. This rule applies regardless of the framework.
@@ -84,12 +101,40 @@ Check `package.json` for `react`, `preact`, or `jsx-dom`. All JSX-based framewor
 
 ## Naming Conventions
 
-- JavaScript/TypeScript: `camelCase` for variables/functions, `PascalCase` for classes/components
-- Constants: `SCREAMING_SNAKE_CASE`
-- File names: `kebab-case.ts` for utilities, `PascalCase.tsx` for components
-- Use hyphens as separators in file names (not underscores or camelCase)
-- Variables must have descriptive names — no single-letter names (`a`, `b`, `e`, `x`). The minification/mangling is the bundler's job, not the developer's. Code must be readable by humans
-- Clear indentation: consistent depth, no ambiguous nesting
+- `camelCase`: variables, functions
+- `PascalCase`: classes, components, types/interfaces
+- `SCREAMING_SNAKE_CASE`: constants
+- File names must match project convention (detect from existing files)
+
+**Flag as Important:**
+
+- Non-descriptive names (`data`, `item`, `x`, `handle()`, `process()`)
+- Generic class names (`Manager`, `Helper`, `Service`)
+
+## Semantic Function Naming
+
+Any function that returns a value must use a prefix indicating the return type (`get`, `is`, `has`, `fetch`, `calculate`, etc.). ES6 getters (`get name()`) don't need prefixes.
+
+| Pattern                           | Expected Return        | If Different              | Level          |
+| --------------------------------- | ---------------------- | ------------------------- | -------------- |
+| `getXxx()`                        | Value/Object           | No return / void          | **Important**  |
+| `isXxx()` / `hasXxx()`            | `boolean`              | Other type                | **Important**  |
+| `fetchXxx()` / `loadXxx()`        | `Promise<T>`           | Synchronous               | **Suggestion** |
+| `calculateXxx()` / `computeXxx()` | Derived value          | Side effects only         | **Important**  |
+| `toXxx()` / `asXxx()`             | Converted type         | No conversion             | **Suggestion** |
+| `createXxx()` / `buildXxx()`      | New instance           | Returns existing/modified | **Suggestion** |
+| `updateXxx()` / `setXxx()`        | Modified object / void | Returns unrelated value   | **Important**  |
+
+**Flag as Important:**
+
+- `getUser()` returns a `Car` or `Order` (wrong type)
+- `isValid()` returns an object instead of boolean
+- `fetchData()` that doesn't make a network call
+- `calculateTotal()` that returns a string instead of number
+
+**Flag as Suggestion:**
+
+- `getUser()` returns `{ user, metadata }` instead of just `user`
 
 ## Error Handling
 

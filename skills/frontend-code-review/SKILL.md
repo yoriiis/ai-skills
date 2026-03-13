@@ -18,12 +18,21 @@ Review agent that replicates a senior front-end architect's code review methodol
 
 If the answer to all four is "no", it's noise. Don't report it as a primary finding.
 
-### Feedback levels
+### Feedback Levels
 
 - **Blocking** — Must fix before merge. Bugs, security, data loss. Each finding must include the concrete consequence
 - **Important** — Should fix, significant improvement. Must include WHY it matters and the consequence
 - **Suggestion** — Nice to have. Lower impact. Explain the concrete benefit. Use for personal preferences or optional improvements
 - **Minor** — Non-blocking items. One line per item in a dedicated Minor section. Never let these overshadow Blocking/Important
+
+### Severity Level Examples
+
+| Level          | Examples                                                                                                                                                                                                 | Why This Level                                           |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| **Blocking**   | `innerHTML` with user input, secrets/tokens in code, missing try/catch on network calls, XSS vulnerability                                                                                               | Real bugs, security risks, production incidents          |
+| **Important**  | Function > 50 lines doing multiple things, semantic naming mismatch (`getXxx()` without return), missing error handling on fetch, accessibility issue in component, complex function added without tests | Significant maintainability, testability, or a11y impact |
+| **Suggestion** | Could use early return pattern, optional chaining opportunity, alternative API design, dependency injection for testability                                                                              | Better way exists, but current is acceptable             |
+| **Minor**      | Code hygiene items (console.log, const/let, trailing whitespace, unused imports) — see references for details                                                                                            | Cosmetic; tools should catch; doesn't affect runtime     |
 
 **Golden rule**: if the project has a linter/formatter configured and a CI pipeline, trust the tooling for formatting and style. Focus human review time on what tools cannot catch.
 
@@ -212,7 +221,7 @@ Review Progress:
 - [ ] 2. Pipeline status
 - [ ] 3. Code analysis (contextual analysis + duplication detection)
 - [ ] 4. Blocking (bugs, security, data loss)
-- [ ] 5. Important (architecture, a11y, edge cases, perf)
+- [ ] 5. Important (architecture, a11y, semantic naming, missing tests, edge cases, perf)
 - [ ] 6. Minor (non-blocking minor items)
 - [ ] 7. Highlights & verdict
 ```
@@ -353,6 +362,8 @@ These make the codebase significantly better. Report with an explanation of WHY.
 - Heavy computation in a hot path without memoization
 - Unnecessary re-renders or redundant event listeners
 
+**Semantic naming & testability (JS/TS):** See `references/javascript-typescript.md` — Semantic Function Naming, Testability sections.
+
 **Integration & regression risk:**
 
 - Changes that could break consumers of a shared library
@@ -368,12 +379,11 @@ These make the codebase significantly better. Report with an explanation of WHY.
 - Test that doesn't actually test anything meaningful
 - Missing negative test cases (`.not` expectations to prevent mutants)
 
-### 6. Minor (non-blocking)
+### 6. Minor (Non-Blocking)
 
 Group these in a dedicated **Minor** section. One line per item.
 
-- `console.log` / `console.info` / `console.debug` left in code — never Blocking (except if logs contain tokens, passwords, PII). If build strips them, omit or barely mention
-- Trailing empty lines, extra whitespace
+- Code hygiene: `console.log`, `const`/`let`, trailing whitespace, unused imports — see `references/javascript-typescript.md`
 - Import ordering preferences
 - Minor naming improvements that don't affect readability
 - CHANGELOG section title format (`### Updates` vs `### Features`)
@@ -408,9 +418,7 @@ Review feedback is in **English by default**. If the user requests another langu
 
 ### Minor
 
-- `[file]`: console.log left
-- `[file]`: newline missing at end of file
-- `[file]`: unused imports
+- `[file]`: code hygiene (log, newline, imports — see references)
 ```
 
 ### Writing rules
@@ -455,16 +463,16 @@ When posting comments on the MR/PR:
 
 See **Reference loading** above for when to load each file.
 
-| File                                  | Purpose                                           |
-| ------------------------------------- | ------------------------------------------------- |
-| `references/javascript-typescript.md` | JS/TS conventions, DOM, events, class patterns    |
-| `references/html.md`                  | Semantics, script loading, W3C syntax             |
-| `references/css.md`                   | Detect convention from files, enforce consistency |
-| `references/twig.md`                  | Twig template conventions, includes, defaults     |
-| `references/accessibility.md`         | SVG a11y, focus management, ARIA, semantic HTML   |
-| `references/security.md`              | XSS, third-party scripts, secrets, runtime risks  |
-| `references/code-quality.md`          | Error handling, performance, boundary conditions  |
-| `references/testing.md`               | Jest conventions, test structure                  |
-| `references/project-structure.md`     | Directory layout, package.json, CHANGELOG         |
-| `references/ci-cd.md`                 | Pipeline, GitHub Actions, GitLab CI               |
-| `references/images-assets.md`         | Image format, size, SVG optimization, sprites     |
+| File                                  | Purpose                                                                      |
+| ------------------------------------- | ---------------------------------------------------------------------------- |
+| `references/javascript-typescript.md` | JS/TS conventions, semantic naming, testability, DOM, events, class patterns |
+| `references/html.md`                  | Semantics, script loading, W3C syntax                                        |
+| `references/css.md`                   | Detect convention from files, enforce consistency                            |
+| `references/twig.md`                  | Twig template conventions, includes, defaults                                |
+| `references/accessibility.md`         | SVG a11y, focus management, ARIA, semantic HTML                              |
+| `references/security.md`              | XSS, third-party scripts, secrets, runtime risks                             |
+| `references/code-quality.md`          | Error handling, performance, boundary conditions, SOLID principles           |
+| `references/testing.md`               | Jest conventions, test structure                                             |
+| `references/project-structure.md`     | Directory layout, package.json, CHANGELOG                                    |
+| `references/ci-cd.md`                 | Pipeline, GitHub Actions, GitLab CI                                          |
+| `references/images-assets.md`         | Image format, size, SVG optimization, sprites                                |
