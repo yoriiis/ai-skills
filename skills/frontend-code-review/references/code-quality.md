@@ -23,7 +23,7 @@ Checklist for code quality review: error handling, front-end performance, bounda
 
 ### Consistent Pattern
 
-- Use a consistent error-handling pattern across the project — if the codebase favours try/catch, use try/catch; if it favours `.catch()` on promises, follow that. Adapt to project conventions.
+- Use a consistent error-handling pattern across the project — if the codebase favours try/catch, use try/catch; if it favours `.catch()` on promises, follow that. Adapt to project conventions
 
 ### Anti-patterns to Flag
 

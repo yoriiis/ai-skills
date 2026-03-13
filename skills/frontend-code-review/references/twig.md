@@ -80,10 +80,10 @@ Reference standards for Twig template review. Generic rules applicable to any Sy
 
 ## Naming
 
-- Variables must have descriptive names — no `a`, `b`, `e`, `item1`.
-- **Loop variables**: Avoid generic terms like `item` in `for item in items`. Prefer context-specific names like `for article in articles` to improve readability and avoid scope confusion in nested loops.
-- The template must be readable without external context.
-- Clear indentation: consistent depth, aligned with the HTML structure.
+- Variables must have descriptive names — no `a`, `b`, `e`, `item1`
+- **Loop variables**: Avoid generic terms like `item` in `for item in items`. Prefer context-specific names like `for article in articles` to improve readability and avoid scope confusion in nested loops
+- The template must be readable without external context
+- Clear indentation: consistent depth, aligned with the HTML structure
 
 ## Formatting
 

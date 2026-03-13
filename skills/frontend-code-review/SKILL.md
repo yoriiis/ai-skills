@@ -20,10 +20,10 @@ If the answer to all four is "no", it's noise. Don't report it as a primary find
 
 ### Feedback levels
 
-- **Blocking** — Must fix before merge. Bugs, security, data loss. Each finding must include the concrete consequence.
-- **Important** — Should fix, significant improvement. Must include WHY it matters and the consequence.
-- **Suggestion** — Nice to have. Lower impact. Explain the concrete benefit. Use for personal preferences or optional improvements.
-- **Minor** — Non-blocking items. One line per item in a dedicated Minor section. Never let these overshadow Blocking/Important.
+- **Blocking** — Must fix before merge. Bugs, security, data loss. Each finding must include the concrete consequence
+- **Important** — Should fix, significant improvement. Must include WHY it matters and the consequence
+- **Suggestion** — Nice to have. Lower impact. Explain the concrete benefit. Use for personal preferences or optional improvements
+- **Minor** — Non-blocking items. One line per item in a dedicated Minor section. Never let these overshadow Blocking/Important
 
 **Golden rule**: if the project has a linter/formatter configured and a CI pipeline, trust the tooling for formatting and style. Focus human review time on what tools cannot catch.
 
@@ -187,10 +187,10 @@ Load references **after** diffs are fetched. Apply rules based on changed file t
 
 **Analysis is based ONLY on the MR and its diff.** Never on the local workspace.
 
-- **Source of truth**: diff fetched via MCP (GitLab/GitHub). Do not read local files to compare or analyze.
-- **Extra context**: if needed, use `get_repository_file` to read a file on the source branch of the remote repo — not the workspace. Reason: the diff describes changes on the source branch; we need the file state as it will be after merge, and the workspace may be out of sync.
-- **Aligned with diff**: before asking "remove X", verify that X is still present in the diff (added/modified lines). If X only appears in removed lines (-), do not ask to remove it — it is already done. Feedback must target only what will remain after merge.
-- **No confusion**: do not mix workspace state with MR state.
+- **Source of truth**: diff fetched via MCP (GitLab/GitHub). Do not read local files to compare or analyze
+- **Extra context**: if needed, use `get_repository_file` to read a file on the source branch of the remote repo — not the workspace. Reason: the diff describes changes on the source branch; we need the file state as it will be after merge, and the workspace may be out of sync
+- **Aligned with diff**: before asking "remove X", verify that X is still present in the diff (added/modified lines). If X only appears in removed lines (-), do not ask to remove it — it is already done. Feedback must target only what will remain after merge
+- **No confusion**: do not mix workspace state with MR state
 
 ## Review Checklist
 
@@ -213,7 +213,7 @@ Review Progress:
 - Pipeline status is visible and green
 - Branch name contains the ticket ID (format varies: `TICKET-ID`, `feat/TICKET-ID`, etc. — just verify the ticket number is present)
 - No conflicts with the target branch
-- **Description**: do not ask for a description or ticket link when the description is empty. A description is useful only when the MR contains changes beyond the ticket (additional fixes, opportunistic refactoring, etc.) and an explanation would help the reviewer. If no ticket in the project or empty description: say nothing. Only mention when diffs clearly go beyond a single ticket AND there is no explanation — "These changes seem to go beyond the ticket — a short description would help the reviewer."
+- **Description**: do not ask for a description or ticket link when the description is empty. A description is useful only when the MR contains changes beyond the ticket (additional fixes, opportunistic refactoring, etc.) and an explanation would help the reviewer. If no ticket in the project or empty description: say nothing. Only mention when diffs clearly go beyond a single ticket AND there is no explanation — "These changes seem to go beyond the ticket — a short description would help the reviewer"
 
 **Only if the project uses them:**
 
@@ -361,7 +361,7 @@ These make the codebase significantly better. Report with an explanation of WHY.
 
 Group these in a dedicated **Minor** section. One line per item.
 
-- `console.log` / `console.info` / `console.debug` left in code — never Blocking (except if logs contain tokens, passwords, PII). If build strips them, omit or barely mention.
+- `console.log` / `console.info` / `console.debug` left in code — never Blocking (except if logs contain tokens, passwords, PII). If build strips them, omit or barely mention
 - Trailing empty lines, extra whitespace
 - Import ordering preferences
 - Minor naming improvements that don't affect readability
@@ -370,8 +370,8 @@ Group these in a dedicated **Minor** section. One line per item.
 
 ### 7. Highlights & Verdict
 
-- **Highlights**: Systematically look for one thing done well (clean naming, elegant logic, good test coverage). Positive reinforcement builds trust between the architect (AI) and the developer.
-- Verdict: The developer must know immediately if they need to act.
+- **Highlights**: Systematically look for one thing done well (clean naming, elegant logic, good test coverage). Positive reinforcement builds trust between the architect (AI) and the developer
+- Verdict: The developer must know immediately if they need to act
 
 ## Language
 
@@ -423,9 +423,9 @@ Review feedback is in **English by default**. If the user requests another langu
   corrected code here
   ```
   ````
-- **Tone**: professional, direct, constructive. Like a senior colleague, not an audit report.
+- **Tone**: professional, direct, constructive. Like a senior colleague, not an audit report
 - **Length**: a review should be readable in 2 minutes, not 10
-- **Diff only** — See "Source of truth" section. Never use local workspace files.
+- **Diff only** — See "Source of truth" section. Never use local workspace files
 
 ## Publishing to GitLab/GitHub
 

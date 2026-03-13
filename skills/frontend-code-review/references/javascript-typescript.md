@@ -93,10 +93,10 @@ Some projects use `jsx-dom` or `jsx-dom-cjs` for JSX rendering to DOM elements. 
 
 ## Error Handling
 
-- Use `console.warn` for non-critical errors (not `console.log`).
-- Always wrap async operations in try/catch.
-- **TypeScript Narrowing**: In TS, caught errors are `unknown`. Ensure they are properly narrowed before usage (e.g., `if (error instanceof Error)`) to maintain type safety.
-- Include context in error messages: `[ComponentName] methodName error`.
+- Use `console.warn` for non-critical errors (not `console.log`)
+- Always wrap async operations in try/catch
+- **TypeScript Narrowing**: In TS, caught errors are `unknown`. Ensure they are properly narrowed before usage (e.g., `if (error instanceof Error)`) to maintain type safety
+- Include context in error messages: `[ComponentName] methodName error`
 
 ## JSDoc
 
