@@ -34,20 +34,36 @@ Only apply if the project has a `tsconfig.json`. If the project is in plain JS, 
 - Create descriptive named variables for timer values (not magic numbers)
 - Functions longer than ~30 lines or with multiple nesting levels should be extracted into smaller functions
 - Avoid code duplication — factor shared logic
-- No anonymous functions in event listeners — use named methods and `.bind(this)` in constructor. Enables proper `removeEventListener` and unit testing
+- **No anonymous functions** in event listeners or complex logic — use named, exportable functions. Enables `removeEventListener`, unit testing, and proper debugging
 - Use `setAttribute` / `getAttribute` to manipulate element attributes (not direct property access like `element.dataset`)
 - Convert NodeList to Array with `[...nodeList]` or `Array.from(nodeList)` — both are equivalent in modern environments. Prefer spread for brevity when destructuring
 
-## DOM & Events
+## Modern Syntax (ES6+)
+
+Prefer modern ES6+ constructs when they improve readability or safety. Flag as **Suggestion** when an opportunity is obvious:
+
+- **Optional chaining** (`?.`) — avoid long chains of `&&` for nested property access
+- **Nullish coalescing** (`??`) — use instead of `||` when `0`, `""`, `false` are valid values
+- **Destructuring** — for function parameters, return values, and variable declaration
 
 - Cache selectors if used more than once (as a constant or class property)
 - DOM injection must be done outside of loops (batch with DocumentFragment)
 - Use data attributes for JavaScript hooks: `[data-bookmark-button]`, `element.getAttribute('data-bookmark-id')`
 - Prefer event delegation over individual listeners on repeated elements
 
-## Class Pattern
+## Performance (JS Context)
 
-Standard component structure:
+See `references/code-quality.md` for full performance checklist. In JS/TS, flag as **Important** when:
+
+- **Inefficient loops** — O(n²) patterns, unnecessary iterations, or redundant work inside loops
+- **Repeated DOM manipulation** — Layout thrashing (interleaving reads like `offsetHeight`/`getBoundingClientRect` with writes like `style.*`/`classList` in a loop). Batch reads first, then writes
+- **Heavy computation without memoization** — Pure functions called repeatedly with same inputs in hot paths (event handlers, render cycles) should be memoized
+
+## Structured Units (Modules, Hooks, Classes)
+
+Prefer **structured and isolated units** that enable unit testing — Modules, Hooks, or Classes. Adapt to the project's existing paradigm; do not impose classes if the project uses modules or hooks.
+
+**If the project uses classes**, standard structure:
 
 ```javascript
 export default class ComponentName {
@@ -111,26 +127,27 @@ Check `package.json` for `react`, `preact`, or `jsx-dom`. All JSX-based framewor
 - Non-descriptive names (`data`, `item`, `x`, `handle()`, `process()`)
 - Generic class names (`Manager`, `Helper`, `Service`)
 
-## Semantic Function Naming
+## Semantic Function Naming (Golden Rule)
 
-Any function that returns a value must use a prefix indicating the return type (`get`, `is`, `has`, `fetch`, `calculate`, etc.). ES6 getters (`get name()`) don't need prefixes.
+Any function that returns a value must use a prefix indicating the return type. **Strict prefix/return correspondence** — any mismatch is **Important**.
 
-| Pattern                           | Expected Return        | If Different              | Level          |
-| --------------------------------- | ---------------------- | ------------------------- | -------------- |
-| `getXxx()`                        | Value/Object           | No return / void          | **Important**  |
-| `isXxx()` / `hasXxx()`            | `boolean`              | Other type                | **Important**  |
-| `fetchXxx()` / `loadXxx()`        | `Promise<T>`           | Synchronous               | **Suggestion** |
-| `calculateXxx()` / `computeXxx()` | Derived value          | Side effects only         | **Important**  |
-| `toXxx()` / `asXxx()`             | Converted type         | No conversion             | **Suggestion** |
-| `createXxx()` / `buildXxx()`      | New instance           | Returns existing/modified | **Suggestion** |
-| `updateXxx()` / `setXxx()`        | Modified object / void | Returns unrelated value   | **Important**  |
+| Prefix                    | Expected Return                     | Mismatch = Level   |
+| ------------------------- | ----------------------------------- | ------------------ |
+| `isXxx()` / `hasXxx()`    | **Boolean** only                    | **Important**      |
+| `getXxx()` / `fetchXxx()` | Value, Object, or Promise (required)| **Important**      |
+| `validateXxx()`           | If it returns a result → prefer `isXxxValid` | **Important** |
+| `calculateXxx()` / `computeXxx()` | Derived value               | **Important**      |
+| `toXxx()` / `asXxx()`     | Converted type                     | **Suggestion**     |
+| `createXxx()` / `buildXxx()` | New instance                    | **Suggestion**     |
+| `updateXxx()` / `setXxx()`| Modified object / void             | **Important**      |
 
 **Flag as Important:**
 
+- `getXxx()` / `fetchXxx()` with no return or void
+- `isXxx()` / `hasXxx()` returning non-boolean
+- `validateXxx()` that returns a boolean — rename to `isXxxValid`
 - `getUser()` returns a `Car` or `Order` (wrong type)
-- `isValid()` returns an object instead of boolean
 - `fetchData()` that doesn't make a network call
-- `calculateTotal()` that returns a string instead of number
 
 **Flag as Suggestion:**
 

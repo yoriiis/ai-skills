@@ -4,6 +4,11 @@ Reference standards for test review. Only enforce rules that match the target pr
 
 ---
 
+## Responsibility
+
+- **Complex logic without tests** → Flag as **Important**. If a complex function (business logic, data transformation, calculation) is added without a corresponding unit test, the reviewer must flag it
+- **Test the logic, not the framework** — Tests must focus on the SUT (System Under Test) and its behavior, not on framework internals. Avoid tests that only verify rendering or mocks without covering the actual business logic
+
 ## Framework & Structure
 
 - Test files in `__tests__/` directory, next to the code they cover

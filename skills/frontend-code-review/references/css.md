@@ -29,6 +29,12 @@ These are suggestions to flag when relevant; adapt severity to project context.
 - **Font-weight**: Prefer numeric values (`400`, `700`) over `normal`, `bold`
 - **Components**: Should be 100% width and adapt to their parent container
 
+## Rendering Performance
+
+- **Animations**: Prefer CSS (transitions, keyframes) over JavaScript for simple animations — **Suggestion** when JS is used unnecessarily
+- **GPU acceleration**: Suggest `will-change` or `translateZ(0)` for complex animations that stutter — enables compositing layer
+- **Reflow**: Verify animated properties do not trigger reflow — prefer `transform` and `opacity` over `top`/`left`, `width`/`height`. Flag as **Important** when reflow-causing properties are animated on hot paths (e.g. scrolling, frequently triggered transitions)
+
 ## File Organization
 
 - Follow the project's file organization — detect from existing CSS files and component structure

@@ -27,12 +27,12 @@ If the answer to all four is "no", it's noise. Don't report it as a primary find
 
 ### Severity Level Examples
 
-| Level          | Examples                                                                                                                                                                                                 | Why This Level                                           |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| **Blocking**   | `innerHTML` with user input, secrets/tokens in code, missing try/catch on network calls, XSS vulnerability                                                                                               | Real bugs, security risks, production incidents          |
-| **Important**  | Function > 50 lines doing multiple things, semantic naming mismatch (`getXxx()` without return), missing error handling on fetch, accessibility issue in component, complex function added without tests | Significant maintainability, testability, or a11y impact |
-| **Suggestion** | Could use early return pattern, optional chaining opportunity, alternative API design, dependency injection for testability                                                                              | Better way exists, but current is acceptable             |
-| **Minor**      | Code hygiene items (console.log, const/let, trailing whitespace, unused imports) — see references for details                                                                                            | Cosmetic; tools should catch; doesn't affect runtime     |
+| Level          | Examples                                                                                                                                                                                       | Why This Level                                                      |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| **Blocking**   | Security critical, major logic bugs, data loss — `innerHTML` with user input, secrets/tokens, XSS, missing try/catch on network calls                                                          | Real bugs, security risks, production incidents                     |
+| **Important**  | Semantic inconsistency (`getXxx()` without return), SRP violation (function doing too many things), complex business logic without tests, accessibility issue, missing error handling on fetch | Significant maintainability, testability, or a11y impact            |
+| **Suggestion** | Architecture improvements (DIP), design patterns, modern syntax (optional chaining, nullish coalescing), early return opportunity, dependency injection for testability                        | Better way exists, but current is acceptable                        |
+| **Minor**      | Code hygiene (console.log, const/let, trailing whitespace, unused imports) — **only if not handled by CI**. One line per item. See references for details                                      | Cosmetic; tools should catch; skip when linter/formatter runs in CI |
 
 **Golden rule**: if the project has a linter/formatter configured and a CI pipeline, trust the tooling for formatting and style. Focus human review time on what tools cannot catch.
 
@@ -166,6 +166,8 @@ Branch convention: feat/<ticket> | <TICKET-ID> | free-form
 ### Tooling calibration
 
 Based on the profile, adjust what you report: when a safety net is missing (no linter, no tests), issues that tools would normally catch become **Important** (not Minor), since there is no automated backup. When linter and formatter are present, trust them for style — focus on what tools cannot catch.
+
+**CI detection**: If a CI pipeline is present (`.gitlab-ci.yml`, `.github/workflows/*`) and runs linter/formatter, lighten or empty the Minor section for style items (trailing whitespace, const/let, imports). Focus human review on semantics and architecture.
 
 ### Reference loading
 
@@ -381,9 +383,9 @@ These make the codebase significantly better. Report with an explanation of WHY.
 
 ### 6. Minor (Non-Blocking)
 
-Group these in a dedicated **Minor** section. One line per item.
+Group these in a dedicated **Minor** section. One line per item. **Skip style items entirely when CI runs linter/formatter** — focus on what tools cannot catch.
 
-- Code hygiene: `console.log`, `const`/`let`, trailing whitespace, unused imports — see `references/javascript-typescript.md`
+- Code hygiene: `console.log`, `const`/`let`, trailing whitespace, unused imports — only when no linter/formatter in CI. See `references/javascript-typescript.md`
 - Import ordering preferences
 - Minor naming improvements that don't affect readability
 - CHANGELOG section title format (`### Updates` vs `### Features`)
