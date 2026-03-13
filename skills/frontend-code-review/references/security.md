@@ -37,13 +37,13 @@ Focus on client-side vulnerabilities and third-party integrations.
 
 - API keys, tokens, or credentials in client-side code or git history
 - Auth tokens (JWT, session ID) in `localStorage` — vulnerable to XSS; prefer httpOnly cookies when backend controls auth
-- Sensitive data in `localStorage` / `sessionStorage` without encryption
+- **Sensitive data in `localStorage` or `sessionStorage` — forbidden.** Do not store PII, tokens, or any sensitive data in Web Storage. Client-side encryption is security theater: the decryption key lives in the bundle and is trivial to extract via XSS. Use httpOnly cookies or server-side session for auth and sensitive data.
 - Excessive logging of user data (PII in `console.log`)
 - Hardcoded environment-specific values (localhost URLs, staging API endpoints, test tokens)
 
 ## Supply Chain & Dependencies
 
-- **Dependency Review**: If a new package is added, verify its health (popularity, maintenance, known vulnerabilities) and its impact on the bundle size
+- **Dependency Review**: If a new package is added, verify that it **exists** (not an AI hallucination or typo-squatting: check npm registry, spelling, and official package name), then verify its health (popularity, maintenance, known vulnerabilities) and its impact on the bundle size
 - Dependency version format inconsistent with project convention (check existing `package.json`)
 - Dependency added without justification (bundle size impact)
 - Importing from untrusted CDNs without `integrity` check

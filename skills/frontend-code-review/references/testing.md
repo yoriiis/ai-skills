@@ -6,6 +6,7 @@ Reference standards for test review. Only enforce rules that match the target pr
 
 ## Responsibility
 
+- **Tautological tests (AI bias)**: AI tends to write tests that **validate the current implementation** (even if wrong) just to make CI pass. Flag tests that only assert "what the code does" without asserting "what the code should do" from a spec or product requirement. Tests must encode expected behavior, not snapshot current behavior.
 - **Complex logic without tests** → Flag as **Important**. This rule applies **primarily to new whole functions** created in the diff. For modifications to existing functions, only flag a missing test if you have verified (via the absence of a `.test.js` or equivalent file) that the function is not already covered. The goal is to avoid false positives from the "Diff-only" rule
 - **Test the logic, not the framework** — Tests must focus on the SUT (System Under Test) and its behavior, not on framework internals. Avoid tests that only verify rendering or mocks without covering the actual business logic
 - **Unit Test Isolation**: Unit test each function independently. Mock all outgoing/external calls (APIs, other modules, heavy dependencies) to isolate the function and prevent side effects.

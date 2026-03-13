@@ -24,6 +24,10 @@ Checklist for code quality review: error handling, front-end performance, bounda
 
 ## Architecture Principles
 
+**Context Window Amnesia (AI-generated code)**
+
+- AI often produces **local** fixes that pass review but break the **global** architecture (wrong module, duplicated logic, bypassed layers). When reviewing AI-generated or AI-assisted changes, ask: "Does this fit the existing architecture? Is logic duplicated elsewhere? Are layers/abstractions respected?"
+
 **Single Responsibility Principle (SRP)**
 
 - A function should do only what its name indicates

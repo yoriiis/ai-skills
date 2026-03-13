@@ -24,7 +24,7 @@ Reference standards for accessibility review.
 - `<a>` for navigation, `<button>` for actions — never the opposite
 - **Forms & Inputs**: Every form field must have a programmatically associated `<label>`. If a visual label is impossible, use `aria-label` or `aria-labelledby`
 - **Color Contrast**: Ensure text and interactive elements meet WCAG AA standards (4.5:1 for normal text). Do not rely on color alone to convey information
-- Click/touch targets: minimum 30x30px
+- Click/touch targets: minimum 44×44px (WCAG 2.1 AAA, Apple HIG)
 
 ## Images
 

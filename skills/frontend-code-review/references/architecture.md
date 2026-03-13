@@ -1,4 +1,4 @@
-# Project Structure
+# Architecture & Project Structure
 
 Reference standards for project organization and package management.
 
