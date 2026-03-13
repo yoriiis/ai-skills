@@ -1,6 +1,6 @@
-# Twig
+# Templates
 
-Reference standards for Twig template review. Generic rules applicable to any Symfony/Twig project.
+Reference standards for server-side HTML template review. Generic rules applicable to Server-side HTML templating engines (Twig, Blade, Nunjucks, Liquid, etc.).
 
 ---
 

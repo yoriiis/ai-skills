@@ -10,7 +10,7 @@ Reference standards for accessibility review.
 - SVG inside a button/link (icon-only): add a `<span class="sr-only">` with description
 - Informational SVGs (not in button/link): use `aria-hidden="false"`, `role="img"`, `aria-label="description"`
 - SVG sprite parent: `<svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;">`
-- SVGs must use `viewBox` (not fixed `width`/`height`), exported edge-to-edge — for sprite optimization and SVGO → see `images-assets.md`
+- SVGs must use `viewBox` (not fixed `width`/`height`), exported edge-to-edge — for sprite optimization and SVGO → see `assets.md`
 
 ## Focus Management
 
@@ -29,7 +29,7 @@ Reference standards for accessibility review.
 ## Images
 
 - All `<img>` must have an `alt` attribute (empty `alt=""` for decorative images)
-- For image format, file size, and optimization → see `images-assets.md`
+- For image format, file size, and optimization → see `assets.md`
 
 ## ARIA & Dynamic Content
 

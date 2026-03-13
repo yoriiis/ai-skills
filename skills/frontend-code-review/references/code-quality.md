@@ -28,14 +28,14 @@ Checklist for code quality review: error handling, front-end performance, bounda
 
 - A function should do only what its name indicates
 - If you need "and" to describe it, split it
-- See `references/javascript-typescript.md` for JS/TS detection patterns
+- See `references/js-ts.md` for JS/TS detection patterns
 
 **Dependency Inversion Principle (DIP)**
 
 - Depend on abstractions, not concrete implementations
 - Do not instantiate heavy dependencies (API clients, Logger) inside functions — pass them as parameters or via constructor to enable mocking in tests
 - Inject dependencies via constructor/parameters
-- See `references/javascript-typescript.md` for JS/TS patterns
+- See `references/js-ts.md` for JS/TS patterns
 
 **Testability by Design**
 
