@@ -27,12 +27,12 @@ If the answer to all four is "no", it's noise. Don't report it as a primary find
 
 ### Severity Level Examples
 
-| Level          | Examples                                                                                                                                                                                                                        | Why This Level                                                      |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| **Blocking**   | Security critical, major logic bugs, data loss — `innerHTML` with user input, secrets/tokens, XSS, missing `try/catch` on network calls                                                                                         | Real bugs, security risks, production incidents                     |
-| **Important**  | Semantic inconsistency (`getXxx()`/`fetchXxx()` without return), SRP violation, complex business logic without tests, `element.dataset` used in loop (use `getAttribute`), accessibility issue, missing error handling on fetch | Significant maintainability, testability, or a11y impact            |
-| **Suggestion** | Architecture improvements (DIP), design patterns, modern syntax (`optional chaining`, `nullish coalescing`), early return opportunity, dependency injection for testability                                                     | Better way exists, but current is acceptable                        |
-| **Minor**      | Code hygiene (`console.log`, `const`/`let`, trailing whitespace, unused imports) — **only if not handled by CI**. One line per item. See references for details                                                                 | Cosmetic; tools should catch; skip when linter/formatter runs in CI |
+| Level          | Examples                                                                                                                     | Why This Level                                                      |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| **Blocking**   | XSS vulnerabilities, exposed secrets, unchecked external input, data mutation bugs, missing network error handling.          | Real bugs, security risks, production incidents                     |
+| **Important**  | Semantic naming mismatches, SOLID/SRP violations, missing tests on complex logic, accessibility failures (WCAG).             | Significant maintainability, testability, or a11y impact            |
+| **Suggestion** | Modern syntax refactoring, design pattern improvements, dependency injection opportunities.                                  | Better way exists, but current is acceptable                        |
+| **Minor**      | Unused imports, trailing whitespace, console logs (if CI doesn't catch them). One line per item. See references for details. | Cosmetic; tools should catch; skip when linter/formatter runs in CI |
 
 **Golden rule**: if the project has a linter/formatter configured and a CI pipeline, trust the tooling for formatting and style. Focus human review time on what tools cannot catch.
 
@@ -394,12 +394,7 @@ Review feedback is in **English by default**. If the user requests another langu
 - **Highlights**: when relevant, in flow — not mandatory
 - **Code suggestion**: when relevant, not systematic
 - **Code citations**: when citing code in feedback (file paths, identifiers, function names, selectors, snippets), wrap them in backticks for readability
-- **GitLab suggestion syntax** for code modifications:
-  ````
-  ```suggestion:-0+0
-  corrected code here
-  ```
-  ````
+- **Code modifications**: Avoid using line-targeted suggestion blocks (like ```suggestion) as they often break markdown rendering across platforms. Instead, provide corrected code in standard markdown blocks (e.g. `javascript` …) and post the feedback at the file level or as a general comment on the MR/PR overview.
 - **Tone**: professional, direct, constructive. Like a senior colleague, not an audit report
 - **Length**: a review should be readable in 2 minutes, not 10
 - **Diff only** — See "Source of truth: remote only" section
@@ -410,9 +405,9 @@ Workflow: report in chat (Phase 1) → ask user which findings to post (Phase 2)
 
 When posting comments on the MR/PR:
 
-1. Use `create_workitem_note` for general comments
+1. Prefer general/overview notes (`create_workitem_note` or equivalent) over fragile inline thread replies — post feedback at the file level or as a comment on the MR/PR overview when code suggestions are involved.
 2. Always be constructive — suggest fixes, don't just point out problems
-3. Use GitLab/GitHub suggestion syntax for code modifications
+3. Provide code corrections in standard markdown blocks (see Writing rules); avoid line-targeted suggestion blocks that break across platforms
 4. Keep a respectful and collaborative tone
 5. **Do not create a thread/note on pipeline status** — status stays in the report header only
 6. **AI disclosure (mandatory)** — append to each posted comment: `---` then `*AI-assisted review (skill frontend-code-review)*` (or `*Review assistée par skill frontend-code-review*` in French if user requested French)
@@ -430,7 +425,7 @@ See **Reference loading** above for when to load each file.
 | `references/accessibility.md` | SVG a11y, focus management, ARIA, semantic HTML                                      |
 | `references/security.md`      | XSS, third-party scripts, secrets, runtime risks                                     |
 | `references/code-quality.md`  | Error handling, performance, boundary conditions, SOLID principles                   |
-| `references/testing.md`       | Jest conventions, test structure                                                     |
+| `references/testing.md`       | Test structure and conventions (framework-agnostic)                                  |
 | `references/architecture.md`  | Directory layout, package.json, CHANGELOG                                            |
 | `references/ci-cd.md`         | Pipeline, GitHub Actions, GitLab CI                                                  |
 | `references/assets.md`        | Image format, size, SVG optimization, sprites                                        |
