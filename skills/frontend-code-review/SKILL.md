@@ -20,9 +20,10 @@ If the answer to all four is "no", it's noise. Don't report it as a primary find
 
 ### Feedback levels
 
-- **Blocking**: Real problems that must be fixed. Always report.
-- **Important**: Significant improvements that make the codebase better. Report with an explanation of WHY it matters.
-- **Minor**: Minor issues detectable by tooling or low-impact style preferences. Mention them briefly in a dedicated section. Never let these overshadow Blocking/Important feedback.
+- **Blocking** — Must fix before merge. Bugs, security, data loss. Each finding must include the concrete consequence.
+- **Important** — Should fix, significant improvement. Must include WHY it matters and the consequence.
+- **Suggestion** — Nice to have. Lower impact. Explain the concrete benefit. Use for personal preferences or optional improvements.
+- **Minor** — Non-blocking items. One line per item in a dedicated Minor section. Never let these overshadow Blocking/Important.
 
 **Golden rule**: if the project has a linter/formatter configured and a CI pipeline, trust the tooling for formatting and style. Focus human review time on what tools cannot catch.
 
@@ -31,7 +32,7 @@ If the answer to all four is "no", it's noise. Don't report it as a primary find
 Always the same flow — no mode to detect:
 
 1. **Phase 1 (obligatory)** — Analyse + report in chat
-2. **Phase 2 (optional)** — Ask the user: "Which findings would you like to post on the MR?" (e.g. All Blocking, Blocking + Important, custom selection, None)
+2. **Phase 2 (optional)** — Ask the user which findings to post. One thread per finding; the user chooses which get written to the MR. Always ask before posting. (e.g. All Blocking, Blocking + Important, custom selection, None)
 3. **Phase 3** — Post selected findings on the MR/PR (if the user chose any) with IA disclosure
 
 Use the Ask/question mode to display options before posting.
@@ -46,8 +47,8 @@ When asked to review a MR/PR:
 4. Fetch MR/PR metadata (GitLab MCP `get_merge_request`, or GitHub equivalent)
 5. Fetch diffs via MCP
 6. Fetch pipeline/CI status
-7. Load relevant references based on changed file types (see Reference loading). Ignore files with unsupported extensions — no feedback.
-8. Apply the review checklist (Blocking → Important → Minor), using contextual analysis and duplication detection
+7. Load relevant references based on changed file types (see Reference loading). Frontend and CI only — backend files are out of scope.
+8. Apply the review checklist (Blocking → Important → Suggestion → Minor), using contextual analysis and duplication detection
 9. Format findings using the output template (Phase 1 — report in chat)
 10. Ask which findings to post (Phase 2), then post selected ones with IA mention (Phase 3)
 
@@ -146,12 +147,7 @@ Branch convention: feat/<ticket> | <TICKET-ID> | free-form
 
 ### Tooling calibration
 
-Based on the profile, adjust what you report:
-
-- **Linter detected** → formatting, unused imports, semicolons = Minor (non-blocking)
-- **Build strips console.log** → console.log = Minor (or omit if build strips)
-- **No linter detected** → these issues become Important since no automated safety net
-- **No tests detected** → missing tests = Important, not just a suggestion
+Based on the profile, adjust what you report: when a safety net is missing (no linter, no tests), issues that tools would normally catch become **Important** (not Minor), since there is no automated backup. When linter and formatter are present, trust them for style — focus on what tools cannot catch.
 
 ### Reference loading
 
@@ -185,14 +181,14 @@ Load references **after** diffs are fetched. Apply rules based on changed file t
 | Test files changed (`*.test.*`, `*.spec.*`, `**/__tests__/*`)                                   | `testing.md`                              |
 | Application code changed (JS/TS, HTML, Twig, components) **without** corresponding test changes | `testing.md` (to check for missing tests) |
 
-**Scope**: Only review files matching the patterns above. Files with unsupported extensions (e.g. `.php`, `.py`, `.go`, `.rb`, `.java`, `.kt`) are **out of scope** — do not load references for them, do not comment on them, do not flag issues. If a MR contains only out-of-scope files, state that the skill does not cover these file types and skip the code review.
+**Scope**: **Frontend** and **CI** are in scope (tables above define which files and references). **Backend** (PHP, Python, Go, Ruby, Java, Kotlin, etc.) is out of scope — do not load references for backend files, do not comment on them. CI config (`.gitlab-ci.yml`, `.github/workflows/*`) is always analyzed. If a MR contains only backend files, state that the skill covers frontend and CI only and skip the code review.
 
 ## Source of truth: MR diff only
 
 **Analysis is based ONLY on the MR and its diff.** Never on the local workspace.
 
 - **Source of truth**: diff fetched via MCP (GitLab/GitHub). Do not read local files to compare or analyze.
-- **Extra context**: if needed, use `get_repository_file` (or equivalent) to read a file on the source branch of the remote repo — not the workspace file.
+- **Extra context**: if needed, use `get_repository_file` to read a file on the source branch of the remote repo — not the workspace. Reason: the diff describes changes on the source branch; we need the file state as it will be after merge, and the workspace may be out of sync.
 - **Aligned with diff**: before asking "remove X", verify that X is still present in the diff (added/modified lines). If X only appears in removed lines (-), do not ask to remove it — it is already done. Feedback must target only what will remain after merge.
 - **No confusion**: do not mix workspace state with MR state.
 
@@ -207,7 +203,7 @@ Review Progress:
 - [ ] 4. Blocking (bugs, security, data loss)
 - [ ] 5. Important (architecture, a11y, edge cases, perf)
 - [ ] 6. Minor (non-blocking minor items)
-- [ ] 7. Ce qui fonctionne bien & verdict
+- [ ] 7. Highlights & verdict
 ```
 
 ### 1. MR Metadata (adapted)
@@ -228,7 +224,7 @@ Review Progress:
 
 ### 2. Pipeline Status
 
-- If pipeline failed, identify the failing job and report it
+Pipeline status is mentioned in the report header only — do not open a discussion thread on pipeline. If pipeline failed, identify the failing job and report it in the header.
 
 ### 3. Code Analysis
 
@@ -251,7 +247,7 @@ The diff alone is not always enough. When a change seems ambiguous or the surrou
 
 Principle: deleted code will no longer exist after merge. Feedback must focus on what remains or on the impact of the deletion.
 
-**Aligned with diff**: before asking "remove X", verify X is still present in the diff (added/modified lines). If X only appears in removed lines (-), do not ask to remove it — it is already done.
+See "Source of truth" above for the verify-before-asking-remove rule.
 
 Do not flag issues on **unchanged code** (context only) unless Blocking (e.g. security vulnerability).
 
@@ -372,16 +368,9 @@ Group these in a dedicated **Minor** section. One line per item.
 - CHANGELOG section title format (`### Updates` vs `### Features`)
 - Minor CSS convention deviations
 
-### 7. Ce qui fonctionne bien & Verdict
+### 7. Highlights & Verdict
 
 When relevant, highlight what was done well — no obligation to find something. Examples: clean separation of concerns, good error handling, well-written tests, clear naming, good use of TypeScript types. Keep it in the flow of the report, not a separate section. If nothing stands out, skip.
-
-## Severity Levels
-
-- **Blocking** — Must fix before merge. Bugs, security, data loss. Each finding must include the concrete consequence.
-- **Important** — Should fix, significant improvement. **Must include WHY** it matters and the consequence.
-- **Suggestion** — Nice to have. Lower impact. Explain the concrete benefit.
-- **Minor** — Non-blocking items. One line per item in the Minor section.
 
 ## Language
 
@@ -417,15 +406,15 @@ Review feedback is in **English by default**. If the user requests another langu
 - **Constructive feedback**: specific and actionable; explain why; suggest an alternative when possible (not just "this is wrong")
 - **Focused on the code, not the person** — critique the code, not the developer
 - **Educational, not judgmental** — avoid "Why didn't you use X?"; use "Have you considered…?" instead
-- **Consequence required**: each Blocking or Important finding must include the concrete consequence in one sentence
-- **Prioritized**: clearly distinguish Blocking vs Important vs Minor
+- **Consequence required** (Blocking and Important only): each Blocking or Important finding must include the concrete consequence in one sentence
+- **Prioritized**: clearly distinguish Blocking vs Important vs Suggestion vs Minor
 - **Consolidate**: group similar issues (e.g. "5 functions missing error handling" not 5 separate findings)
 - **Short and direct**: 1-2 sentences per finding max
 - **Verdict first**: the developer must know immediately if they need to act
 - **Group by file**: easier to navigate than by severity
 - **Minor section**: non-blocking items (log, newline, imports, etc.) go in the Minor section, one line per item — not in per-file findings
 - **Subjective opinion**: if a finding is personal preference, note it ("personal opinion", "subjective"). For Suggestion/Minor: add "Not blocking if you prefer" when relevant
-- **Ce qui fonctionne bien**: when relevant, in flow — not mandatory
+- **Highlights**: when relevant, in flow — not mandatory
 - **Code suggestion**: when relevant, not systematic
 - **GitLab suggestion syntax** for code modifications:
   ````
@@ -435,7 +424,7 @@ Review feedback is in **English by default**. If the user requests another langu
   ````
 - **Tone**: professional, direct, constructive. Like a senior colleague, not an audit report.
 - **Length**: a review should be readable in 2 minutes, not 10
-- **Diff only**: never use local workspace files; analysis based solely on MR diff from MCP
+- **Diff only** — See "Source of truth" section. Never use local workspace files.
 
 ## Publishing to GitLab/GitHub
 
@@ -448,7 +437,7 @@ When posting comments on the MR/PR:
 3. Use GitLab/GitHub suggestion syntax for code modifications
 4. Keep a respectful and collaborative tone
 5. **Do not create a thread/note on pipeline status** — status stays in the report header only
-6. **IA disclosure (mandatory)** — append to each posted comment: `---` then `*Review assisted assistée par skill frontend-code-review*` (or `*AI-assisted review (skill)*` in English)
+6. **IA disclosure (mandatory)** — append to each posted comment: `---` then `*AI-assisted review (skill frontend-code-review)*` (or `*Review assistée par skill frontend-code-review*` in French if user requested French)
 
 ## Resources
 

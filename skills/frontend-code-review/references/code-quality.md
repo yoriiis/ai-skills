@@ -8,9 +8,9 @@ Checklist for code quality review: error handling, front-end performance, bounda
 
 ### Early Returns
 
-- Prefer early returns over deeply nested `else` blocks — exit conditions early to reduce cognitive load and improve readability
-- Flag guard clauses that could be extracted for clarity
-- Avoid `else` when the `if` branch returns — the `else` is redundant
+- **Early returns** — prefer early returns over deeply nested `else` blocks; exit conditions early to reduce cognitive load and improve readability
+- **Guard clauses** — flag complex guard conditions that could be extracted into a named helper for readability (e.g. `if (!isEligibleUser(user)) return;` instead of a long inline condition)
+- **Redundant else** — avoid `else` when the `if` branch returns; the `else` is redundant
 
 ### Function Size
 
