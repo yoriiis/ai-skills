@@ -68,20 +68,20 @@ Prefer **encapsulation in isolated units** (Classes, Hooks, or Modules) that fac
 
 ```javascript
 export default class ComponentName {
-	constructor(options) {
-		this.element = options.element;
-		this.onClickHandler = this.onClickHandler.bind(this);
-	}
+  constructor(options) {
+    this.element = options.element;
+    this.onClickHandler = this.onClickHandler.bind(this);
+  }
 
-	async init() {
-		this.addEvents();
-	}
+  async init() {
+    this.addEvents();
+  }
 
-	addEvents() {
-		this.element.addEventListener('click', this.onClickHandler);
-	}
+  addEvents() {
+    this.element.addEventListener('click', this.onClickHandler);
+  }
 
-	onClickHandler(event) {}
+  onClickHandler(event) {}
 }
 ```
 

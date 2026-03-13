@@ -24,29 +24,29 @@ Checklist for code quality review: error handling, front-end performance, bounda
 
 ## Architecture Principles
 
-**Context Window Amnesia (AI-generated code)**
+### Context Window Amnesia (AI-generated code)
 
 - AI often produces **local** fixes that pass review but break the **global** architecture (wrong module, duplicated logic, bypassed layers). When reviewing AI-generated or AI-assisted changes, ask: "Does this fit the existing architecture? Is logic duplicated elsewhere? Are layers/abstractions respected?"
 
-**Single Responsibility Principle (SRP)**
+### Single Responsibility Principle (SRP)
 
 - A function should do only what its name indicates
 - If you need "and" to describe it, split it
 - See `references/js-ts.md` for JS/TS detection patterns
 
-**Dependency Inversion Principle (DIP)**
+### Dependency Inversion Principle (DIP)
 
 - Depend on abstractions, not concrete implementations
 - Do not instantiate heavy dependencies (API clients, Logger) inside functions — pass them as parameters or via constructor to enable mocking in tests
 - Inject dependencies via constructor/parameters
 - See `references/js-ts.md` for JS/TS patterns
 
-**Testability by Design**
+### Testability by Design
 
 - Even when no tests exist, code must be written **as if it will be tested**: pure functions when possible, clear inputs/outputs, no hidden coupling
 - Prefer explicit dependencies over implicit ones
 
-**Design Patterns to Recognize (Flag as Suggestion)**
+### Design Patterns to Recognize (Flag as Suggestion)
 
 - Tight coupling between components
 - God objects/classes that know too much

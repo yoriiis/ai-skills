@@ -1,7 +1,7 @@
 module.exports = {
 	printWidth: 100,
-	useTabs: true,
-	semi: false,
+	useTabs: false,
+	semi: true,
 	trailingComma: 'none',
 	singleQuote: true,
 	arrowParens: 'always',
@@ -11,7 +11,6 @@ module.exports = {
 			options: {
 				proseWrap: 'preserve',
 				tabWidth: 2,
-				useTabs: true,
 				singleQuote: true,
 				semi: true
 			}

@@ -178,7 +178,7 @@ If a file in the MR/PR uses a different style than what the project config enfor
 
 Build this profile before reviewing:
 
-```
+```text
 Project: [name]
 Language: TypeScript | JavaScript | Mixed
 Module: ESM | CJS | Unknown
@@ -247,7 +247,7 @@ Load references **after** diffs are fetched, using the paths in the tables below
 
 ## Review Checklist
 
-```
+```text
 Review Progress:
 - [ ] 0. Discover project conventions & tooling
 - [ ] 1. MR/PR metadata (adapted to project)

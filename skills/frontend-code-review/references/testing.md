@@ -39,25 +39,25 @@ const getInstance = () => new ComponentName();
 let component;
 
 describe('ComponentName', () => {
-	beforeEach(() => {
-		document.body.innerHTML = '<div class="component"></div>';
-		component = getInstance();
-	});
+  beforeEach(() => {
+    document.body.innerHTML = '<div class="component"></div>';
+    component = getInstance();
+  });
 
-	afterEach(() => {
-		document.body.innerHTML = '';
-		jest.clearAllMocks();
-	});
+  afterEach(() => {
+    document.body.innerHTML = '';
+    jest.clearAllMocks();
+  });
 
-	describe('methodName', () => {
-		it('should [expected behavior]', () => {
-			// ...
-		});
+  describe('methodName', () => {
+    it('should [expected behavior]', () => {
+      // ...
+    });
 
-		it('should [expected behavior] with [variation]', () => {
-			// ...
-		});
-	});
+    it('should [expected behavior] with [variation]', () => {
+      // ...
+    });
+  });
 });
 ```
 
