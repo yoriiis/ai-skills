@@ -22,7 +22,8 @@ Strategy: minimize blocking scripts, control loading order. Always `defer`, neve
 
 - Scripts in `<head>` MUST have `defer` — never block rendering
 - `type="module"` scripts are deferred by default — do NOT add `defer` (redundant, invalid on some parsers)
-- Do NOT use `async` — it breaks loading order (executes as soon as downloaded, no guarantee). If you see `async` on a script, flag it
+- Do NOT use `async` for **application scripts** — it breaks loading order (executes as soon as downloaded, no guarantee). Application scripts must use `defer`. If you see `async` on an app script, flag it
+- **Exception**: `async` is **allowed and even recommended** for third-party scripts that are fully isolated and independent of the DOM (e.g., Google Analytics, tracking pixels, autonomous widgets) — these do not depend on the page DOM or load order
 - Non-critical scripts: place before `</body>` closing tag
 - Avoid inline `<script>` blocks that execute synchronously — they block parsing
 - Add `crossorigin` attribute on cross-origin scripts

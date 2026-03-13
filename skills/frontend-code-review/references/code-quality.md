@@ -14,7 +14,8 @@ Checklist for code quality review: error handling, front-end performance, bounda
 
 ### Function Size
 
-- Functions longer than ~30 lines should be extracted into smaller functions — suggest extraction and single-responsibility refactoring
+- Functions longer than ~30 lines should be extracted into smaller functions — suggest extraction and single-responsibility refactoring. **This applies strictly to business and procedural logic**
+- **Exemptions**: Declarative code is exempt from this strict limit: HTML templates, JSX/TSX in React, Vue templates, and large static configuration objects
 - Multiple nesting levels (3+) indicate a candidate for early returns or extraction
 
 > **SOLID Principle**: Single Responsibility Principle (SRP) — a function should do only what its name indicates. If you need "and" to describe what a function does, split it.

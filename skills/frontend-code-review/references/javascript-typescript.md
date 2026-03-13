@@ -35,7 +35,7 @@ Only apply if the project has a `tsconfig.json`. If the project is in plain JS, 
 - Functions longer than ~30 lines or with multiple nesting levels should be extracted into smaller functions
 - Avoid code duplication — factor shared logic
 - **Anonymous functions**: In **React/Vue/Svelte** JSX/Templates, simple inline arrow functions for passing props are acceptable (e.g. `onClick={() => setOpen(true)}`). Flag as **Suggestion** only if the handler becomes complex. **Important** for: native `addEventListener` (named handler required for `removeEventListener`), complex calculations, and data manipulation logic that should be named and exportable for unit tests
-- **Data attributes**: Prefer `getAttribute('data-xxx')` over `element.dataset.xxx` for performance — `dataset` forces the browser to build `DOMStringMap` and parse camelCase. **Suggestion** in general; **Important** when access occurs inside a loop (`for`, `map`, `forEach` on many elements)
+- **Data attributes**: Prefer `getAttribute('data-xxx')` over `element.dataset.xxx` for performance — `dataset` forces the browser to build `DOMStringMap` and parse camelCase. This is a global **Suggestion**. Upgrade to **Important** only when access occurs in a **critical rendering path** (e.g., inside `requestAnimationFrame`, or in loops that massively process the DOM for virtual lists). Do not flag as Important for small classic loops (e.g., `.map` over a few elements)
 - Use `setAttribute` / `getAttribute` for attribute manipulation
 - Convert NodeList to Array with `[...nodeList]` or `Array.from(nodeList)` — both are equivalent in modern environments. Prefer spread for brevity when destructuring
 
@@ -150,6 +150,8 @@ Any function that returns a value must use a prefix indicating the return type. 
 | `updateXxx()` / `setXxx()`        | Modified object / void                        | **Important**    |
 
 > **Note**: `validateXxx` is correct when the function throws on error and returns nothing. If it returns `true`/`false`, use `isXxxValid` instead.
+
+**Exception for reactive components:** Functions like `fetchXxx()`, `loadXxx()` or `getXxx()` may return `void` without triggering an **Important** alert when used in a **reactive component context** (React, Vue, Svelte) where they serve to update internal or local state (e.g., calling a state setter). In such cases, the semantic intent is "fetch and update state", not "fetch and return data".
 
 **Flag as Important:**
 

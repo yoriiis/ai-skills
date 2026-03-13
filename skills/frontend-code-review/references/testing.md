@@ -6,7 +6,7 @@ Reference standards for test review. Only enforce rules that match the target pr
 
 ## Responsibility
 
-- **Complex logic without tests** → Flag as **Important**. If a complex function (business logic, data transformation, calculation) is added without a corresponding unit test, the reviewer must flag it
+- **Complex logic without tests** → Flag as **Important**. This rule applies **primarily to new whole functions** created in the diff. For modifications to existing functions, only flag a missing test if you have verified (via the absence of a `.test.js` or equivalent file) that the function is not already covered. The goal is to avoid false positives from the "Diff-only" rule
 - **Test the logic, not the framework** — Tests must focus on the SUT (System Under Test) and its behavior, not on framework internals. Avoid tests that only verify rendering or mocks without covering the actual business logic
 
 ## Framework & Structure
