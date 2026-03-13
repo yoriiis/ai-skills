@@ -35,8 +35,16 @@ Only apply if the project has a `tsconfig.json`. If the project is in plain JS, 
 - Functions longer than ~30 lines or with multiple nesting levels should be extracted into smaller functions
 - Avoid code duplication — factor shared logic
 - **No anonymous functions** in event listeners or complex logic — use named, exportable functions. Enables `removeEventListener`, unit testing, and proper debugging
-- Use `setAttribute` / `getAttribute` to manipulate element attributes (not direct property access like `element.dataset`)
+- **Data attributes**: Prefer `getAttribute('data-xxx')` over `element.dataset.xxx` for performance — `dataset` forces the browser to build `DOMStringMap` and parse camelCase. **Suggestion** in general; **Important** when access occurs inside a loop (`for`, `map`, `forEach` on many elements)
+- Use `setAttribute` / `getAttribute` for attribute manipulation
 - Convert NodeList to Array with `[...nodeList]` or `Array.from(nodeList)` — both are equivalent in modern environments. Prefer spread for brevity when destructuring
+
+## DOM & Events
+
+- Cache selectors if used more than once (as a constant or class property)
+- DOM injection must be done outside of loops (batch with DocumentFragment)
+- Use data attributes for JavaScript hooks: `[data-bookmark-button]`, `element.getAttribute('data-bookmark-id')`
+- Prefer event delegation over individual listeners on repeated elements
 
 ## Modern Syntax (ES6+)
 
@@ -45,11 +53,6 @@ Prefer modern ES6+ constructs when they improve readability or safety. Flag as *
 - **Optional chaining** (`?.`) — avoid long chains of `&&` for nested property access
 - **Nullish coalescing** (`??`) — use instead of `||` when `0`, `""`, `false` are valid values
 - **Destructuring** — for function parameters, return values, and variable declaration
-
-- Cache selectors if used more than once (as a constant or class property)
-- DOM injection must be done outside of loops (batch with DocumentFragment)
-- Use data attributes for JavaScript hooks: `[data-bookmark-button]`, `element.getAttribute('data-bookmark-id')`
-- Prefer event delegation over individual listeners on repeated elements
 
 ## Performance (JS Context)
 
@@ -61,7 +64,7 @@ See `references/code-quality.md` for full performance checklist. In JS/TS, flag 
 
 ## Structured Units (Modules, Hooks, Classes)
 
-Prefer **structured and isolated units** that enable unit testing — Modules, Hooks, or Classes. Adapt to the project's existing paradigm; do not impose classes if the project uses modules or hooks.
+Prefer **encapsulation in isolated units** (Classes, Hooks, or Modules) that facilitate dependency injection (DIP) and unit testing. Adapt to the project's existing paradigm; do not impose classes if the project uses modules or hooks.
 
 **If the project uses classes**, standard structure:
 
@@ -131,10 +134,10 @@ Check `package.json` for `react`, `preact`, or `jsx-dom`. All JSX-based framewor
 
 Any function that returns a value must use a prefix indicating the return type. **Strict prefix/return correspondence** — any mismatch is **Important**.
 
-| Prefix                    | Expected Return                     | Mismatch = Level   |
-| ------------------------- | ----------------------------------- | ------------------ |
-| `isXxx()` / `hasXxx()`    | **Boolean** only                    | **Important**      |
-| `getXxx()` / `fetchXxx()` | Value, Object, or Promise (required)| **Important**      |
+| Prefix                    | Expected Return                                | Mismatch = Level   |
+| ------------------------- | ---------------------------------------------- | ------------------ |
+| `isXxx()` / `hasXxx()`    | **Boolean** only                               | **Important**      |
+| `getXxx()` / `fetchXxx()` | Non-void (Value, Object, or Promise required)  | **Important**      |
 | `validateXxx()`           | If it returns a result → prefer `isXxxValid` | **Important** |
 | `calculateXxx()` / `computeXxx()` | Derived value               | **Important**      |
 | `toXxx()` / `asXxx()`     | Converted type                     | **Suggestion**     |
@@ -143,7 +146,7 @@ Any function that returns a value must use a prefix indicating the return type. 
 
 **Flag as Important:**
 
-- `getXxx()` / `fetchXxx()` with no return or void
+- Any function starting with `get` or `fetch` that has no `return` statement or explicitly returns `undefined`/`void`
 - `isXxx()` / `hasXxx()` returning non-boolean
 - `validateXxx()` that returns a boolean — rename to `isXxxValid`
 - `getUser()` returns a `Car` or `Order` (wrong type)
@@ -155,7 +158,11 @@ Any function that returns a value must use a prefix indicating the return type. 
 
 ## Error Handling
 
-For error handling rules (try/catch, async, swallowed exceptions) → see `references/code-quality.md`.
+**Strategy and logic** (swallowed exceptions, fallback UI, error propagation) → `references/code-quality.md` is the single source of truth.
+
+**Syntax only** — adapt to project conventions:
+- If the project uses `async/await`, prefer `try/catch` over chained `.catch()` for consistency
+- If the project uses `.catch()` on promises, follow that pattern
 
 ## JSDoc
 
