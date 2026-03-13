@@ -6,11 +6,11 @@ Reference standards for image and SVG asset optimization.
 
 ## Images
 
-### File size
+### File size & Layout Stability
 
-- Images should not be excessively heavy — flag if obvious oversizing (e.g. multi‑MB PNGs for thumbnails)
+- Images should not be excessively heavy — flag if obvious oversizing
+- **Prevent CLS**: Always provide `width` and `height` attributes (or a CSS `aspect-ratio`) to allow the browser to reserve space before the image loads.
 - Consider lazy loading (`loading="lazy"`) for below-the-fold images
-- Large images without responsive `srcset` / `sizes` may cause unnecessary bandwidth
 
 ### Format
 

@@ -20,6 +20,7 @@ If the project uses nesting (e.g., `postcss-nested`), new CSS in the MR should u
 ## General Rules
 
 - Follow the project's existing notation and naming conventions — detect from existing CSS files
+- **Z-index management**: Avoid magic numbers (e.g., `9999`). Use a centralized system (CSS variables like `--z-index-modal`) or rely on stacking contexts to keep layering predictable.
 - Hex colors in lowercase: `#ff6600`, not `#FF6600`
 - Use CSS variables for colors — prefer existing project variables over hardcoded hex values
 - Nest as much as possible (if project uses nesting), but max 2-3 levels deep

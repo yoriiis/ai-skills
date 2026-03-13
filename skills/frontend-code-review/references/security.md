@@ -41,6 +41,7 @@ Focus on client-side vulnerabilities and third-party integrations.
 
 ## Supply Chain & Dependencies
 
+- **Dependency Review**: If a new package is added, verify its health (popularity, maintenance, known vulnerabilities) and its impact on the bundle size.
 - Dependency version format inconsistent with project convention (check existing `package.json`)
 - Dependency added without justification (bundle size impact)
 - Importing from untrusted CDNs without `integrity` check

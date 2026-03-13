@@ -370,7 +370,8 @@ Group these in a dedicated **Minor** section. One line per item.
 
 ### 7. Highlights & Verdict
 
-When relevant, highlight what was done well — no obligation to find something. Examples: clean separation of concerns, good error handling, well-written tests, clear naming, good use of TypeScript types. Keep it in the flow of the report, not a separate section. If nothing stands out, skip.
+- **Highlights**: Systematically look for one thing done well (clean naming, elegant logic, good test coverage). Positive reinforcement builds trust between the architect (AI) and the developer.
+- Verdict: The developer must know immediately if they need to act.
 
 ## Language
 
