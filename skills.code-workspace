@@ -1,0 +1,32 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.tabSize": 2,
+		"editor.insertSpaces": true,
+		"editor.rulers": [100],
+		"editor.wordWrap": "off",
+		"files.trimTrailingWhitespace": true,
+		"prettier.configPath": "./prettier.config.cjs",
+		"prettier.prettierPath": "./node_modules/prettier/index.cjs",
+		"search.exclude": {
+			"**/node_modules": true
+		},
+		"[javascript][typescript][markdown][json][jsonc]": {
+			"editor.formatOnSave": true
+		},
+		"[markdown]": {
+			"editor.wordWrap": "off"
+		},
+		"files.associations": {
+			"*.md": "markdown"
+		}
+	},
+	"extensions": {
+		"recommendations": ["esbenp.prettier-vscode"]
+	}
+}
