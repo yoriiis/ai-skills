@@ -34,7 +34,7 @@ Only apply if the project has a `tsconfig.json`. If the project is in plain JS, 
 - Create descriptive named variables for timer values (not magic numbers)
 - Functions longer than ~30 lines or with multiple nesting levels should be extracted into smaller functions
 - Avoid code duplication — factor shared logic
-- **No anonymous functions** in event listeners or complex logic — use named, exportable functions. Enables `removeEventListener`, unit testing, and proper debugging
+- **Anonymous functions**: In **React/Vue/Svelte** JSX/Templates, simple inline arrow functions for passing props are acceptable (e.g. `onClick={() => setOpen(true)}`). Flag as **Suggestion** only if the handler becomes complex. **Important** for: native `addEventListener` (named handler required for `removeEventListener`), complex calculations, and data manipulation logic that should be named and exportable for unit tests
 - **Data attributes**: Prefer `getAttribute('data-xxx')` over `element.dataset.xxx` for performance — `dataset` forces the browser to build `DOMStringMap` and parse camelCase. **Suggestion** in general; **Important** when access occurs inside a loop (`for`, `map`, `forEach` on many elements)
 - Use `setAttribute` / `getAttribute` for attribute manipulation
 - Convert NodeList to Array with `[...nodeList]` or `Array.from(nodeList)` — both are equivalent in modern environments. Prefer spread for brevity when destructuring
@@ -45,6 +45,10 @@ Only apply if the project has a `tsconfig.json`. If the project is in plain JS, 
 - DOM injection must be done outside of loops (batch with DocumentFragment)
 - Use data attributes for JavaScript hooks: `[data-bookmark-button]`, `element.getAttribute('data-bookmark-id')`
 - Prefer event delegation over individual listeners on repeated elements
+
+### Security (Detection Patterns)
+
+Flag as **Blocking** when user or dynamic input is used with: `innerHTML`, `insertAdjacentHTML`, `outerHTML`, `document.write`. Theoretical justification and sanitization strategy → [security.md](security.md)
 
 ## Modern Syntax (ES6+)
 
@@ -134,15 +138,18 @@ Check `package.json` for `react`, `preact`, or `jsx-dom`. All JSX-based framewor
 
 Any function that returns a value must use a prefix indicating the return type. **Strict prefix/return correspondence** — any mismatch is **Important**.
 
-| Prefix                    | Expected Return                                | Mismatch = Level   |
-| ------------------------- | ---------------------------------------------- | ------------------ |
-| `isXxx()` / `hasXxx()`    | **Boolean** only                               | **Important**      |
-| `getXxx()` / `fetchXxx()` | Non-void (Value, Object, or Promise required)  | **Important**      |
-| `validateXxx()`           | If it returns a result → prefer `isXxxValid` | **Important** |
-| `calculateXxx()` / `computeXxx()` | Derived value               | **Important**      |
-| `toXxx()` / `asXxx()`     | Converted type                     | **Suggestion**     |
-| `createXxx()` / `buildXxx()` | New instance                    | **Suggestion**     |
-| `updateXxx()` / `setXxx()`| Modified object / void             | **Important**      |
+| Prefix                            | Expected Return                               | Mismatch = Level |
+| --------------------------------- | --------------------------------------------- | ---------------- |
+| `isXxx()` / `hasXxx()`            | **Boolean** only                              | **Important**    |
+| `getXxx()` / `fetchXxx()`         | Non-void (Value, Object, or Promise required) | **Important**    |
+| `validateXxx()` (throws on error) | void, no return — throws if invalid           | **OK** (correct) |
+| `validateXxx()` (returns boolean) | **Mismatch** — rename to `isXxxValid`         | **Important**    |
+| `calculateXxx()` / `computeXxx()` | Derived value                                 | **Important**    |
+| `toXxx()` / `asXxx()`             | Converted type                                | **Suggestion**   |
+| `createXxx()` / `buildXxx()`      | New instance                                  | **Suggestion**   |
+| `updateXxx()` / `setXxx()`        | Modified object / void                        | **Important**    |
+
+> **Note**: `validateXxx` is correct when the function throws on error and returns nothing. If it returns `true`/`false`, use `isXxxValid` instead.
 
 **Flag as Important:**
 
@@ -161,6 +168,7 @@ Any function that returns a value must use a prefix indicating the return type. 
 **Strategy and logic** (swallowed exceptions, fallback UI, error propagation) → `references/code-quality.md` is the single source of truth.
 
 **Syntax only** — adapt to project conventions:
+
 - If the project uses `async/await`, prefer `try/catch` over chained `.catch()` for consistency
 - If the project uses `.catch()` on promises, follow that pattern
 

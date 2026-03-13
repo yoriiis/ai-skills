@@ -33,7 +33,7 @@ These are suggestions to flag when relevant; adapt severity to project context.
 
 - **Animations**: Prefer CSS (transitions, keyframes) over JavaScript for simple animations — **Suggestion** when JS is used unnecessarily
 - **GPU acceleration**: Suggest `will-change` or `translateZ(0)` for complex animations that stutter — enables compositing layer
-- **Reflow**: Verify animated properties do not trigger reflow — prefer `transform` and `opacity` over `top`/`left`, `width`/`height`. Flag as **Important** when reflow-causing properties are animated on hot paths (e.g. scrolling, frequently triggered transitions)
+- **Reflow**: Verify animated properties do not trigger reflow — prefer `transform` and `opacity` over `top`/`left`, `width`/`height`. Flag as **Important** only on hot paths (scrolling, frequently triggered transitions); **Suggestion** when reflow-causing properties are animated outside hot paths
 
 ## File Organization
 

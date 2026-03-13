@@ -3,6 +3,8 @@
 Checklist for security review, adapted for front-end web projects.
 Focus on client-side vulnerabilities and third-party integrations.
 
+> **Source of truth for security strategy**: why we sanitize, XSS principles, runtime risks. For concrete detection patterns (e.g. flagging `innerHTML` as Blocking) → [javascript-typescript.md](javascript-typescript.md)
+
 ---
 
 ## Input/Output Safety

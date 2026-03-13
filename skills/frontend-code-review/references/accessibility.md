@@ -17,7 +17,7 @@ Reference standards for accessibility review.
 - When opening a modal/menu: move focus to an element inside it (e.g., close button)
 - Focus must only be set when the target element is visible — wait for CSS transition to end before calling `.focus()`
 - Restrict keyboard navigation inside the modal (focus trap: first ↔ last focusable element)
-- When closing modal: return focus to the element that triggered the opening
+- **Important**: When closing a modal, return focus to the element that triggered the opening — critical for keyboard navigation and screen reader users
 
 ## Interactive Elements
 
