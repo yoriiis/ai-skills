@@ -1,0 +1,43 @@
+# Images & SVG Assets
+
+Reference standards for image and SVG asset optimization.
+
+---
+
+## Images
+
+### File size
+
+- Images should not be excessively heavy — flag if obvious oversizing (e.g. multi‑MB PNGs for thumbnails)
+- Consider lazy loading (`loading="lazy"`) for below-the-fold images
+- Large images without responsive `srcset` / `sizes` may cause unnecessary bandwidth
+
+### Format
+
+- Prefer modern formats when supported: WebP, AVIF over PNG/JPEG when the project supports them
+- PNG for transparency, JPEG for photos, SVG for icons/logos when appropriate
+- Flag if a PNG could be WebP/AVIF with similar quality at lower size (project/build context permitting)
+
+---
+
+## SVG
+
+### Optimization
+
+- SVGs should be optimized with **SVGO** (or equivalent) — remove metadata, unnecessary attributes, default values
+- SVG should be **minified** — no unnecessary whitespace, compact attributes
+- Inline SVG: avoid redundant `xmlns` if HTML5 parser handles it; keep only essential attributes
+
+### Sprite usage
+
+When SVG is used in a **sprite** (e.g. `<symbol>` inside a shared `<svg>`):
+
+- **No fixed `width` and `height`** on the sprite symbol or use element — use `viewBox` only
+- Sizing controlled via CSS (`width`, `height` on the `<use>` reference or wrapper)
+- Sprite container: `aria-hidden="true"`, typically `style="position: absolute; width: 0; height: 0; overflow: hidden;"` to hide from layout
+
+### Questions to ask
+
+- "Could this image be served in a more efficient format?"
+- "Has this SVG been run through SVGO?"
+- "Is this sprite symbol using only viewBox (no width/height)?"
