@@ -1,10 +1,29 @@
 # Code Quality
 
-Checklist for code quality review: error handling, front-end performance, and boundary conditions.
+Checklist for code quality review: error handling, front-end performance, boundary conditions, control flow, and function size.
+
+---
+
+## Control Flow & Function Size
+
+### Early Returns
+
+- Prefer early returns over deeply nested `else` blocks — exit conditions early to reduce cognitive load and improve readability
+- Flag guard clauses that could be extracted for clarity
+- Avoid `else` when the `if` branch returns — the `else` is redundant
+
+### Function Size
+
+- Functions longer than ~30 lines should be extracted into smaller functions — suggest extraction and single-responsibility refactoring
+- Multiple nesting levels (3+) indicate a candidate for early returns or extraction
 
 ---
 
 ## Error Handling
+
+### Consistent Pattern
+
+- Use a consistent error-handling pattern across the project — if the codebase favours try/catch, use try/catch; if it favours `.catch()` on promises, follow that. Adapt to project conventions.
 
 ### Anti-patterns to Flag
 

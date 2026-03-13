@@ -29,6 +29,7 @@ Only apply if the project has a `tsconfig.json`. If the project is in plain JS, 
 - No commented-out code
 - Remove unused imports
 - Prefer `const` over `let`, never `var`
+- **Early returns** — prefer early return over nested `else` blocks; exit conditions early to keep the happy path readable
 - If a function takes more than 2 parameters, use destructuring syntax
 - Create descriptive named variables for timer values (not magic numbers)
 - A function must only do what its name says — single responsibility

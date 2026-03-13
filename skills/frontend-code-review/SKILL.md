@@ -18,13 +18,23 @@ Review agent that replicates a senior front-end architect's code review methodol
 
 If the answer to all four is "no", it's noise. Don't report it as a primary finding.
 
-### Feedback tiers
+### Feedback levels
 
 - **Blocking**: Real problems that must be fixed. Always report.
 - **Important**: Significant improvements that make the codebase better. Report with an explanation of WHY it matters.
 - **Minor**: Minor issues detectable by tooling or low-impact style preferences. Mention them briefly in a dedicated section. Never let these overshadow Blocking/Important feedback.
 
 **Golden rule**: if the project has a linter/formatter configured and a CI pipeline, trust the tooling for formatting and style. Focus human review time on what tools cannot catch.
+
+## Workflow
+
+Always the same flow — no mode to detect:
+
+1. **Phase 1 (obligatory)** — Analyse + report in chat
+2. **Phase 2 (optional)** — Ask the user: "Which findings would you like to post on the MR?" (e.g. All Blocking, Blocking + Important, custom selection, None)
+3. **Phase 3** — Post selected findings on the MR/PR (if the user chose any) with IA disclosure
+
+Use the Ask/question mode to display options before posting.
 
 ## Quick Start
 
@@ -38,7 +48,8 @@ When asked to review a MR/PR:
 6. Fetch pipeline/CI status
 7. Load relevant references based on changed file types (see Reference loading). Ignore files with unsupported extensions — no feedback.
 8. Apply the review checklist (Blocking → Important → Minor), using contextual analysis and duplication detection
-9. Format findings using the output template
+9. Format findings using the output template (Phase 1 — report in chat)
+10. Ask which findings to post (Phase 2), then post selected ones with IA mention (Phase 3)
 
 ## Supported platforms
 
@@ -150,14 +161,14 @@ Load references **after** diffs are fetched. Apply rules based on changed file t
 
 **By changed file type**:
 
-| File pattern                     | References to load                                              |
-| -------------------------------- | --------------------------------------------------------------- |
-| `*.js`, `*.ts`, `*.mjs`, `*.cjs` | `javascript-typescript.md`                                      |
-| `*.jsx`, `*.tsx`                 | `javascript-typescript.md` + `accessibility.md` (UI components) |
-| `*.css`, `*.scss`, `*.less`      | `css.md`                                                        |
-| `*.html`                         | `html.md` + `accessibility.md`                                  |
-| `*.twig`                         | `twig.md` + `html.md` + `accessibility.md`                      |
-| `*.vue`, `*.svelte`              | `accessibility.md`                                              |
+| File pattern                                                     | References to load                                              |
+| ---------------------------------------------------------------- | --------------------------------------------------------------- |
+| `*.js`, `*.ts`, `*.mjs`, `*.cjs`                                 | `javascript-typescript.md`                                      |
+| `*.jsx`, `*.tsx`                                                 | `javascript-typescript.md` + `accessibility.md` (UI components) |
+| `*.css`, `*.scss`, `*.less`                                      | `css.md`                                                        |
+| `*.html`                                                         | `html.md` + `accessibility.md`                                  |
+| `*.twig`                                                         | `twig.md` + `html.md` + `accessibility.md`                      |
+| `*.vue`, `*.svelte`                                              | `accessibility.md`                                              |
 | `*.png`, `*.jpg`, `*.jpeg`, `*.gif`, `*.webp`, `*.avif`, `*.svg` | `images-assets.md`                                              |
 
 **By changed content**:
@@ -404,6 +415,8 @@ Review feedback is in **English by default**. If the user requests another langu
 ### Writing rules
 
 - **Constructive feedback**: specific and actionable; explain why; suggest an alternative when possible (not just "this is wrong")
+- **Focused on the code, not the person** — critique the code, not the developer
+- **Educational, not judgmental** — avoid "Why didn't you use X?"; use "Have you considered…?" instead
 - **Consequence required**: each Blocking or Important finding must include the concrete consequence in one sentence
 - **Prioritized**: clearly distinguish Blocking vs Important vs Minor
 - **Consolidate**: group similar issues (e.g. "5 functions missing error handling" not 5 separate findings)
@@ -411,7 +424,7 @@ Review feedback is in **English by default**. If the user requests another langu
 - **Verdict first**: the developer must know immediately if they need to act
 - **Group by file**: easier to navigate than by severity
 - **Minor section**: non-blocking items (log, newline, imports, etc.) go in the Minor section, one line per item — not in per-file findings
-- **Subjective opinion**: if a finding is personal preference, note it ("personal opinion", "subjective")
+- **Subjective opinion**: if a finding is personal preference, note it ("personal opinion", "subjective"). For Suggestion/Minor: add "Not blocking if you prefer" when relevant
 - **Ce qui fonctionne bien**: when relevant, in flow — not mandatory
 - **Code suggestion**: when relevant, not systematic
 - **GitLab suggestion syntax** for code modifications:
@@ -426,13 +439,16 @@ Review feedback is in **English by default**. If the user requests another langu
 
 ## Publishing to GitLab/GitHub
 
-If asked to post comments directly on the MR/PR:
+Workflow: report in chat (Phase 1) → ask user which findings to post (Phase 2) → post selected findings (Phase 3).
+
+When posting comments on the MR/PR:
 
 1. Use `create_workitem_note` for general comments
 2. Always be constructive — suggest fixes, don't just point out problems
 3. Use GitLab/GitHub suggestion syntax for code modifications
 4. Keep a respectful and collaborative tone
 5. **Do not create a thread/note on pipeline status** — status stays in the report header only
+6. **IA disclosure (mandatory)** — append to each posted comment: `---` then `*Review assisted assistée par skill frontend-code-review*` (or `*AI-assisted review (skill)*` in English)
 
 ## Resources
 
