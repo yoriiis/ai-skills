@@ -29,14 +29,21 @@ If the answer to all four is "no", it's noise. Don't report it as a primary find
 
 | Level          | Examples                                                                                                                                                                                                                        | Why This Level                                                      |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| **Blocking**   | Security critical, major logic bugs, data loss — `innerHTML` with user input, secrets/tokens, XSS, missing try/catch on network calls                                                                                           | Real bugs, security risks, production incidents                     |
+| **Blocking**   | Security critical, major logic bugs, data loss — `innerHTML` with user input, secrets/tokens, XSS, missing `try/catch` on network calls                                                                                         | Real bugs, security risks, production incidents                     |
 | **Important**  | Semantic inconsistency (`getXxx()`/`fetchXxx()` without return), SRP violation, complex business logic without tests, `element.dataset` used in loop (use `getAttribute`), accessibility issue, missing error handling on fetch | Significant maintainability, testability, or a11y impact            |
-| **Suggestion** | Architecture improvements (DIP), design patterns, modern syntax (optional chaining, nullish coalescing), early return opportunity, dependency injection for testability                                                         | Better way exists, but current is acceptable                        |
-| **Minor**      | Code hygiene (console.log, const/let, trailing whitespace, unused imports) — **only if not handled by CI**. One line per item. See references for details                                                                       | Cosmetic; tools should catch; skip when linter/formatter runs in CI |
+| **Suggestion** | Architecture improvements (DIP), design patterns, modern syntax (`optional chaining`, `nullish coalescing`), early return opportunity, dependency injection for testability                                                     | Better way exists, but current is acceptable                        |
+| **Minor**      | Code hygiene (`console.log`, `const`/`let`, trailing whitespace, unused imports) — **only if not handled by CI**. One line per item. See references for details                                                                 | Cosmetic; tools should catch; skip when linter/formatter runs in CI |
 
 **Golden rule**: if the project has a linter/formatter configured and a CI pipeline, trust the tooling for formatting and style. Focus human review time on what tools cannot catch.
 
 ## Workflow
+
+**Top-Down Mental Model:**
+
+1. Understand the intent/spec
+2. Verify architectural boundaries
+3. Evaluate if tests genuinely validate the intent
+4. Finally, review implementation details
 
 Always the same flow — no mode to detect:
 
@@ -189,7 +196,7 @@ Branch convention: feat/<ticket> | <TICKET-ID> | free-form
 
 Based on the profile, adjust what you report: when a safety net is missing (no linter, no tests), issues that tools would normally catch become **Important** (not Minor), since there is no automated backup. When linter and formatter are present, trust them for style — focus on what tools cannot catch.
 
-**CI detection**: If a CI pipeline is present (`.gitlab-ci.yml`, `.github/workflows/*`) and runs linter/formatter, lighten or empty the Minor section for style items (trailing whitespace, const/let, imports). Focus human review on semantics and architecture.
+**CI detection**: If a CI pipeline is present (`.gitlab-ci.yml`, `.github/workflows/*`) and runs linter/formatter, lighten or empty the Minor section for style items (trailing whitespace, `const`/`let`, imports). Focus human review on semantics and architecture.
 
 ### Reference loading
 
@@ -199,22 +206,22 @@ Load references **after** diffs are fetched, using the paths in the tables below
 
 **By changed file type**:
 
-| File pattern                                                     | References to load                                                                    |
-| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `*.js`, `*.ts`, `*.mjs`, `*.cjs`                                 | `references/javascript-typescript.md`                                                 |
-| `*.jsx`, `*.tsx`                                                 | `references/javascript-typescript.md` + `references/accessibility.md` (UI components) |
-| `*.css`, `*.scss`, `*.less`                                      | `references/css.md`                                                                   |
-| `*.html`                                                         | `references/html.md` + `references/accessibility.md`                                  |
-| `*.twig`                                                         | `references/twig.md` + `references/html.md` + `references/accessibility.md`           |
-| `*.vue`, `*.svelte`                                              | `references/accessibility.md`                                                         |
-| `*.png`, `*.jpg`, `*.jpeg`, `*.gif`, `*.webp`, `*.avif`, `*.svg` | `references/images-assets.md`                                                         |
+| File pattern                                                     | References to load                                                               |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `*.js`, `*.ts`, `*.mjs`, `*.cjs`                                 | `references/js-ts.md`                                                            |
+| `*.jsx`, `*.tsx`                                                 | `references/js-ts.md` + `references/accessibility.md` (UI components)            |
+| `*.css`, `*.scss`, `*.less`                                      | `references/css.md`                                                              |
+| `*.html`                                                         | `references/html.md` + `references/accessibility.md`                             |
+| `*.twig`, `*.blade.php`, `*.liquid`, `*.njk`                     | `references/templates.md` + `references/html.md` + `references/accessibility.md` |
+| `*.vue`, `*.svelte`                                              | `references/accessibility.md`                                                    |
+| `*.png`, `*.jpg`, `*.jpeg`, `*.gif`, `*.webp`, `*.avif`, `*.svg` | `references/assets.md`                                                           |
 
 **By changed content**:
 
-| Content                                       | Reference                         |
-| --------------------------------------------- | --------------------------------- |
-| `package.json`, `tsconfig.json`, config files | `references/project-structure.md` |
-| `.gitlab-ci.yml`, `.github/workflows/*`       | `references/ci-cd.md`             |
+| Content                                       | Reference                    |
+| --------------------------------------------- | ---------------------------- |
+| `package.json`, `tsconfig.json`, config files | `references/architecture.md` |
+| `.gitlab-ci.yml`, `.github/workflows/*`       | `references/ci-cd.md`        |
 
 **By review scope**:
 
@@ -321,97 +328,19 @@ Every file touched in the MR/PR must be syntactically valid for its type. Invali
 
 These are real problems. Always report.
 
-→ Load `references/security.md` for detailed security checklist.
-
-**Bugs & logic errors:**
-
-- Inverted conditions, off-by-one, wrong comparisons
-- Null/undefined dereferences that WILL crash
-- Infinite loops, infinite recursion
-- Wrong variable used (copy-paste errors)
-
-**Security:**
-
-- XSS vulnerabilities (innerHTML with user input)
-- Secrets, tokens, API keys committed
-- CORS misconfiguration
-- Unvalidated user input used in DOM or queries
-
-**Data integrity:**
-
-- Race conditions on shared state
-- Data loss (overwriting without backup)
-- Inconsistent state after partial failure
-
-**Production hazards:**
-
-- Hardcoded feature branch names, localhost URLs, test API endpoints
-- Debug code: `debugger`, `alert()` for debugging
-- Commented-out code that disables critical functionality
+Rely strictly on `security.md` and `code-quality.md` to identify bugs, security flaws, and data loss. Do not duplicate rules here; apply the reference files contextually.
 
 ### 5. Important
 
 These make the codebase significantly better. Report with an explanation of WHY. Each finding must include the concrete consequence in one sentence.
 
-→ Load `references/code-quality.md` for error handling, performance, and boundary conditions checklists.
-→ Load `references/accessibility.md` for a11y checks.
-
-**Accessibility:**
-
-- Modal/overlay opened without focus trap
-- SVG in button/link without `sr-only` text alternative
-- SVG missing `aria-hidden="true"` and `focusable="false"` on decorative icons
-- Images without `alt` attribute
-- Click targets smaller than 30x30px
-- `<a>` used where `<button>` is appropriate (and vice versa)
-- Focus set on invisible elements (must wait for CSS transition to end)
-- Heading hierarchy broken (`h1` → `h3` without `h2`)
-
-**Architecture & design:**
-
-- Function/class doing too many things → suggest extraction
-- Tight coupling between components that should be independent
-- Duplicated logic that should be factored
-- Types/interfaces placed in wrong location (local vs shared)
-- Component not adaptive (hardcoded dimensions instead of 100% width)
-- New file using CJS in an ESM project (or vice versa)
-
-**Edge cases & robustness:**
-
-- Array operations without empty-array guard
-- Async operations without error handling (missing try/catch or .catch)
-- Optional chaining missing where data can be undefined
-- DOM queries without null checks on results
-
-**Performance:**
-
-- DOM manipulation inside a loop (should batch or use fragment)
-- Selectors queried repeatedly instead of cached
-- Heavy computation in a hot path without memoization
-- Unnecessary re-renders or redundant event listeners
-
-**Semantic naming & testability (JS/TS):** See `references/javascript-typescript.md` — Semantic Function Naming, Testability sections.
-
-**Integration & regression risk:**
-
-- Changes that could break consumers of a shared library
-- Missing CHANGELOG entry for a notable change (if project uses CHANGELOG)
-- API contract changes without version bump
-- Shared library / component integration issues (symlinks, vendor configs)
-- Unintentional changes in the MR/PR (formatting diffs, unrelated file modifications, debug leftovers) — the MR/PR should only contain what's needed for the ticket
-- Build artifacts or generated files committed (`dist/`, `build/`, `coverage/`, `.cache/`, compiled CSS/JS) — these should be in `.gitignore`
-
-**Testing (if project has tests):**
-
-- New logic without corresponding test
-- Test that doesn't actually test anything meaningful
-- Missing negative test cases (`.not` expectations to prevent mutants)
+Rely strictly on the loaded reference files (`accessibility.md`, `architecture.md`, etc.). Your role is to apply those rules contextually, explaining WHY it matters and the consequence.
 
 ### 6. Minor (Non-Blocking)
 
 Group these in a dedicated **Minor** section. One line per item. **Skip style items entirely when CI runs linter/formatter** — focus on what tools cannot catch.
 
-- Code hygiene: `console.log`, `const`/`let`, trailing whitespace, unused imports — only when no linter/formatter in CI. See `references/javascript-typescript.md`
+- Code hygiene: `console.log`, `const`/`let`, trailing whitespace, unused imports — only when no linter/formatter in CI. See `references/js-ts.md`
 - Import ordering preferences
 - Minor naming improvements that don't affect readability
 - CHANGELOG section title format (`### Updates` vs `### Features`)
@@ -492,16 +421,16 @@ When posting comments on the MR/PR:
 
 See **Reference loading** above for when to load each file.
 
-| File                                  | Purpose                                                                      |
-| ------------------------------------- | ---------------------------------------------------------------------------- |
-| `references/javascript-typescript.md` | JS/TS conventions, semantic naming, testability, DOM, events, class patterns |
-| `references/html.md`                  | Semantics, script loading, W3C syntax                                        |
-| `references/css.md`                   | Detect convention from files, enforce consistency                            |
-| `references/twig.md`                  | Twig template conventions, includes, defaults                                |
-| `references/accessibility.md`         | SVG a11y, focus management, ARIA, semantic HTML                              |
-| `references/security.md`              | XSS, third-party scripts, secrets, runtime risks                             |
-| `references/code-quality.md`          | Error handling, performance, boundary conditions, SOLID principles           |
-| `references/testing.md`               | Jest conventions, test structure                                             |
-| `references/project-structure.md`     | Directory layout, package.json, CHANGELOG                                    |
-| `references/ci-cd.md`                 | Pipeline, GitHub Actions, GitLab CI                                          |
-| `references/images-assets.md`         | Image format, size, SVG optimization, sprites                                |
+| File                          | Purpose                                                                              |
+| ----------------------------- | ------------------------------------------------------------------------------------ |
+| `references/js-ts.md`         | JS/TS conventions, semantic naming, testability, DOM, events, class patterns         |
+| `references/html.md`          | Semantics, script loading, W3C syntax                                                |
+| `references/css.md`           | Detect convention from files, enforce consistency                                    |
+| `references/templates.md`     | Server-side template conventions (Twig, Blade, Nunjucks, Liquid), includes, defaults |
+| `references/accessibility.md` | SVG a11y, focus management, ARIA, semantic HTML                                      |
+| `references/security.md`      | XSS, third-party scripts, secrets, runtime risks                                     |
+| `references/code-quality.md`  | Error handling, performance, boundary conditions, SOLID principles                   |
+| `references/testing.md`       | Jest conventions, test structure                                                     |
+| `references/architecture.md`  | Directory layout, package.json, CHANGELOG                                            |
+| `references/ci-cd.md`         | Pipeline, GitHub Actions, GitLab CI                                                  |
+| `references/assets.md`        | Image format, size, SVG optimization, sprites                                        |
