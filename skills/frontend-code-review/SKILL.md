@@ -20,9 +20,9 @@ If the answer to all four is "no", it's noise. Don't report it as a primary find
 
 ### Feedback tiers
 
-- **Tier 1 — IMPACT**: Real problems that must be fixed. Always report.
-- **Tier 2 — CRAFT**: Significant improvements that make the codebase better. Report with an explanation of WHY it matters.
-- **Tier 3 — SECONDARY (non-blocking)**: Minor issues detectable by tooling or low-impact style preferences. Mention them briefly in a dedicated section, clearly marked as non-blocking. Never let these overshadow Tier 1/2 feedback.
+- **Blocking**: Real problems that must be fixed. Always report.
+- **Important**: Significant improvements that make the codebase better. Report with an explanation of WHY it matters.
+- **Minor**: Minor issues detectable by tooling or low-impact style preferences. Mention them briefly in a dedicated section. Never let these overshadow Blocking/Important feedback.
 
 **Golden rule**: if the project has a linter/formatter configured and a CI pipeline, trust the tooling for formatting and style. Focus human review time on what tools cannot catch.
 
@@ -36,8 +36,8 @@ When asked to review a MR/PR:
 4. Fetch MR/PR metadata (GitLab MCP `get_merge_request`, or GitHub equivalent)
 5. Fetch diffs via MCP
 6. Fetch pipeline/CI status
-7. Load relevant references based on changed file types (see Reference loading)
-8. Apply the review checklist (Tier 1 → Tier 2 → Tier 3), using contextual analysis and duplication detection
+7. Load relevant references based on changed file types (see Reference loading). Ignore files with unsupported extensions — no feedback.
+8. Apply the review checklist (Blocking → Important → Minor), using contextual analysis and duplication detection
 9. Format findings using the output template
 
 ## Supported platforms
@@ -137,10 +137,10 @@ Branch convention: feat/<ticket> | <TICKET-ID> | free-form
 
 Based on the profile, adjust what you report:
 
-- **Linter detected** → formatting, unused imports, semicolons = SECONDARY (non-blocking)
-- **Build strips console.log** → console.log = SECONDARY (non-blocking)
-- **No linter detected** → these issues become Tier 2 (CRAFT) since no automated safety net
-- **No tests detected** → missing tests = Tier 2 (CRAFT), not just a suggestion
+- **Linter detected** → formatting, unused imports, semicolons = Minor (non-blocking)
+- **Build strips console.log** → console.log = Minor (or omit if build strips)
+- **No linter detected** → these issues become Important since no automated safety net
+- **No tests detected** → missing tests = Important, not just a suggestion
 
 ### Reference loading
 
@@ -174,6 +174,17 @@ Load references **after** diffs are fetched. Apply rules based on changed file t
 | Test files changed (`*.test.*`, `*.spec.*`, `**/__tests__/*`)                                   | `testing.md`                              |
 | Application code changed (JS/TS, HTML, Twig, components) **without** corresponding test changes | `testing.md` (to check for missing tests) |
 
+**Scope**: Only review files matching the patterns above. Files with unsupported extensions (e.g. `.php`, `.py`, `.go`, `.rb`, `.java`, `.kt`) are **out of scope** — do not load references for them, do not comment on them, do not flag issues. If a MR contains only out-of-scope files, state that the skill does not cover these file types and skip the code review.
+
+## Source of truth: MR diff only
+
+**Analysis is based ONLY on the MR and its diff.** Never on the local workspace.
+
+- **Source of truth**: diff fetched via MCP (GitLab/GitHub). Do not read local files to compare or analyze.
+- **Extra context**: if needed, use `get_repository_file` (or equivalent) to read a file on the source branch of the remote repo — not the workspace file.
+- **Aligned with diff**: before asking "remove X", verify that X is still present in the diff (added/modified lines). If X only appears in removed lines (-), do not ask to remove it — it is already done. Feedback must target only what will remain after merge.
+- **No confusion**: do not mix workspace state with MR state.
+
 ## Review Checklist
 
 ```
@@ -182,10 +193,10 @@ Review Progress:
 - [ ] 1. MR metadata (adapted to project)
 - [ ] 2. Pipeline status
 - [ ] 3. Code analysis (contextual analysis + duplication detection)
-- [ ] 4. Tier 1 — IMPACT (bugs, security, data loss)
-- [ ] 5. Tier 2 — CRAFT (architecture, a11y, edge cases, perf)
-- [ ] 6. Tier 3 — SECONDARY (non-blocking minor items)
-- [ ] 7. Praise & verdict
+- [ ] 4. Blocking (bugs, security, data loss)
+- [ ] 5. Important (architecture, a11y, edge cases, perf)
+- [ ] 6. Minor (non-blocking minor items)
+- [ ] 7. Ce qui fonctionne bien & verdict
 ```
 
 ### 1. MR Metadata (adapted)
@@ -195,7 +206,7 @@ Review Progress:
 - Pipeline status is visible and green
 - Branch name contains the ticket ID (format varies: `TICKET-ID`, `feat/TICKET-ID`, etc. — just verify the ticket number is present)
 - No conflicts with the target branch
-- Description: do not require a paraphrase of the Jira ticket. A description is only needed when the MR contains changes not covered by the ticket (additional fixes, opportunistic refactoring, etc.) that the reviewer needs to be aware of
+- **Description**: do not ask for a description or ticket link when the description is empty. A description is useful only when the MR contains changes beyond the ticket (additional fixes, opportunistic refactoring, etc.) and an explanation would help the reviewer. If no ticket in the project or empty description: say nothing. Only mention when diffs clearly go beyond a single ticket AND there is no explanation — "These changes seem to go beyond the ticket — a short description would help the reviewer."
 
 **Only if the project uses them:**
 
@@ -229,11 +240,13 @@ The diff alone is not always enough. When a change seems ambiguous or the surrou
 
 Principle: deleted code will no longer exist after merge. Feedback must focus on what remains or on the impact of the deletion.
 
-Do not flag issues on **unchanged code** (context only) unless CRITICAL (e.g. security vulnerability).
+**Aligned with diff**: before asking "remove X", verify X is still present in the diff (added/modified lines). If X only appears in removed lines (-), do not ask to remove it — it is already done.
+
+Do not flag issues on **unchanged code** (context only) unless Blocking (e.g. security vulnerability).
 
 #### Duplication detection
 
-When the MR introduces new logic (utility function, pattern, component), use `search` (scope: `blobs`, project scoped) to check if similar code already exists elsewhere in the project. Flag duplication as Tier 2 (CRAFT) with a suggestion to factor shared logic. Typical duplications:
+When the MR introduces new logic (utility function, pattern, component), use `search` (scope: `blobs`, project scoped) to check if similar code already exists elsewhere in the project. Flag duplication as Important with a suggestion to factor shared logic. Typical duplications:
 
 - Helper functions that already exist in a shared utils module
 - Copy-pasted event handling patterns across components
@@ -241,7 +254,7 @@ When the MR introduces new logic (utility function, pattern, component), use `se
 
 ### File validity
 
-Every file touched in the MR must be syntactically valid for its type. Invalid files are Tier 1 (CRITICAL):
+Every file touched in the MR must be syntactically valid for its type. Invalid files are Blocking:
 
 - YAML (`.yml`, `.yaml`): valid structure, correct indentation
 - JSON (`package.json`, `tsconfig.json`, etc.): valid JSON, no trailing commas
@@ -249,9 +262,9 @@ Every file touched in the MR must be syntactically valid for its type. Invalid f
 - CSS: valid syntax, matching braces
 - JS / TS: no syntax errors
 
-### 4. Tier 1 — IMPACT
+### 4. Blocking
 
-These are real problems. Always report, always CRITICAL.
+These are real problems. Always report.
 
 → Load `references/security.md` for detailed security checklist.
 
@@ -281,9 +294,9 @@ These are real problems. Always report, always CRITICAL.
 - Debug code: `debugger`, `alert()` for debugging
 - Commented-out code that disables critical functionality
 
-### 5. Tier 2 — CRAFT
+### 5. Important
 
-These make the codebase significantly better. Report with an explanation of WHY.
+These make the codebase significantly better. Report with an explanation of WHY. Each finding must include the concrete consequence in one sentence.
 
 → Load `references/code-quality.md` for error handling, performance, and boundary conditions checklists.
 → Load `references/accessibility.md` for a11y checks.
@@ -337,35 +350,27 @@ These make the codebase significantly better. Report with an explanation of WHY.
 - Test that doesn't actually test anything meaningful
 - Missing negative test cases (`.not` expectations to prevent mutants)
 
-### 6. Tier 3 — SECONDARY (non-blocking)
+### 6. Minor (non-blocking)
 
-Mention these briefly in a dedicated section. Explicitly label as **non-blocking**.
+Group these in a dedicated **Minor** section. One line per item.
 
-- `console.log` / `console.info` / `console.debug` left in code (if build strips them, just note it)
+- `console.log` / `console.info` / `console.debug` left in code — never Blocking (except if logs contain tokens, passwords, PII). If build strips them, omit or barely mention.
 - Trailing empty lines, extra whitespace
 - Import ordering preferences
 - Minor naming improvements that don't affect readability
 - CHANGELOG section title format (`### Updates` vs `### Features`)
 - Minor CSS convention deviations
 
-### 7. Praise & Verdict
+### 7. Ce qui fonctionne bien & Verdict
 
-**Praise is high-value feedback.** Recognizing good work encourages the patterns you want to see repeated. Always look for at least one thing to praise:
-
-- Clean separation of concerns
-- Good error handling
-- Well-written tests
-- Clear naming
-- Thoughtful MR description
-- Good use of TypeScript types
+When relevant, highlight what was done well — no obligation to find something. Examples: clean separation of concerns, good error handling, well-written tests, clear naming, good use of TypeScript types. Keep it in the flow of the report, not a separate section. If nothing stands out, skip.
 
 ## Severity Levels
 
-- **CRITICAL** — Must fix before merge. Reserved for Tier 1 (bugs, security, data loss).
-- **IMPORTANT** — Should fix, significant improvement. For Tier 2 items. **Must include WHY** it matters.
-- **SUGGESTION** — Nice to have. For Tier 2 items of lower impact. Must explain the concrete benefit.
-- **NON-BLOCKING** — Minor items from Tier 3. Mentioned for awareness, not blocking merge.
-- **PRAISE** — Highlight what's done well. Reinforce good patterns.
+- **Blocking** — Must fix before merge. Bugs, security, data loss. Each finding must include the concrete consequence.
+- **Important** — Should fix, significant improvement. **Must include WHY** it matters and the consequence.
+- **Suggestion** — Nice to have. Lower impact. Explain the concrete benefit.
+- **Minor** — Non-blocking items. One line per item in the Minor section.
 
 ## Language
 
@@ -385,30 +390,29 @@ Review feedback is in **English by default**. If the user requests another langu
 
 #### `[filename]`
 
-- **CRITICAL** — [Short description. Consequence if not fixed.]
-- **IMPORTANT** — [Short description. Why it matters.]
-- **SUGGESTION** — [Short description.] _(personal opinion)_
-- **PRAISE** — [What was done well]
+- **Blocking** — [Short description. Consequence if not fixed.]
+- **Important** — [Short description. Why it matters. Consequence.]
+- **Suggestion** — [Short description.] _(personal opinion)_
 
-### Non-blocking
+### Minor
 
-- `[file]`: `console.log` left
-- `[file]`: trailing empty line
+- `[file]`: console.log left
+- `[file]`: newline missing at end of file
+- `[file]`: unused imports
 ```
 
 ### Writing rules
 
 - **Constructive feedback**: specific and actionable; explain why; suggest an alternative when possible (not just "this is wrong")
-- **Balanced**: include PRAISE; don't only list problems
-- **Prioritized**: clearly distinguish CRITICAL vs SUGGESTION vs NON-BLOCKING
+- **Consequence required**: each Blocking or Important finding must include the concrete consequence in one sentence
+- **Prioritized**: clearly distinguish Blocking vs Important vs Minor
 - **Consolidate**: group similar issues (e.g. "5 functions missing error handling" not 5 separate findings)
 - **Short and direct**: 1-2 sentences per finding max
 - **Verdict first**: the developer must know immediately if they need to act
 - **Group by file**: easier to navigate than by severity
-- **The WHY in one sentence**: not a paragraph, just the concrete consequence
+- **Minor section**: non-blocking items (log, newline, imports, etc.) go in the Minor section, one line per item — not in per-file findings
 - **Subjective opinion**: if a finding is personal preference, note it ("personal opinion", "subjective")
-- **PRAISE in flow**: not in a separate section
-- **Non-blocking section**: brief, one line per item
+- **Ce qui fonctionne bien**: when relevant, in flow — not mandatory
 - **Code suggestion**: when relevant, not systematic
 - **GitLab suggestion syntax** for code modifications:
   ````
@@ -418,6 +422,7 @@ Review feedback is in **English by default**. If the user requests another langu
   ````
 - **Tone**: professional, direct, constructive. Like a senior colleague, not an audit report.
 - **Length**: a review should be readable in 2 minutes, not 10
+- **Diff only**: never use local workspace files; analysis based solely on MR diff from MCP
 
 ## Publishing to GitLab/GitHub
 
@@ -427,6 +432,7 @@ If asked to post comments directly on the MR/PR:
 2. Always be constructive — suggest fixes, don't just point out problems
 3. Use GitLab/GitHub suggestion syntax for code modifications
 4. Keep a respectful and collaborative tone
+5. **Do not create a thread/note on pipeline status** — status stays in the report header only
 
 ## Resources
 
@@ -444,3 +450,4 @@ See **Reference loading** above for when to load each file.
 | `references/testing.md`               | Jest conventions, test structure                 |
 | `references/project-structure.md`     | Directory layout, package.json, CHANGELOG        |
 | `references/ci-cd.md`                 | Pipeline, GitHub Actions, GitLab CI              |
+| `references/images-assets.md`         | Image format, size, SVG optimization, sprites    |
