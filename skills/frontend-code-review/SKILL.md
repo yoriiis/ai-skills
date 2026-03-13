@@ -40,9 +40,9 @@ If the answer to all four is "no", it's noise. Don't report it as a primary find
 
 Always the same flow — no mode to detect:
 
-1. **Phase 1 (obligatory)** — Analyse + report in chat
+1. **Phase 1 (obligatory)** — Analyze + report in chat
 2. **Phase 2 (optional)** — Ask the user which findings to post. One thread per finding; the user chooses which get written to the MR. Always ask before posting. (e.g. All Blocking, Blocking + Important, custom selection, None)
-3. **Phase 3** — Post selected findings on the MR/PR (if the user chose any) with IA disclosure
+3. **Phase 3** — Post selected findings on the MR/PR (if the user chose any) with AI disclosure
 
 Use the Ask/question mode to display options before posting.
 
@@ -59,7 +59,7 @@ When asked to review a MR/PR:
 7. Load relevant references based on changed file types (see Reference loading). Frontend and CI only — backend files are out of scope.
 8. Apply the review checklist (Blocking → Important → Suggestion → Minor), using contextual analysis and duplication detection
 9. Format findings using the output template (Phase 1 — report in chat)
-10. Ask which findings to post (Phase 2), then post selected ones with IA mention (Phase 3)
+10. Ask which findings to post (Phase 2), then post selected ones with AI mention (Phase 3)
 
 ## Supported platforms
 
@@ -85,6 +85,10 @@ Accepted formats:
    - "Unable to access the MR/PR. Check: MCP configured for GitLab/GitHub? Project path correct? Permissions?"
 2. Optionally, fetch a minimal diff — if diffs cannot be retrieved, stop early.
 3. Only proceed to convention discovery and full review once access is confirmed.
+
+## Fat MR handling
+
+If the diff exceeds a complexity or size threshold (e.g. +50 files, or very large single-file diffs), **alert the user** about the risk of context loss and reduced review quality. Propose reviewing in batches: core/logic files first, then UI/CSS, then config or other low-risk changes. Let the user decide how to proceed.
 
 ## Step 0: Discover Project Conventions
 
@@ -171,7 +175,7 @@ Based on the profile, adjust what you report: when a safety net is missing (no l
 
 ### Reference loading
 
-Load references **after** diffs are fetched. Apply rules based on changed file types. Deduplicate when multiple file types map to the same reference.
+Load references **after** diffs are fetched. Resolve paths depending on setup: use `.cursor/skills/<skill-name>/references/` when the skill is installed in Cursor's skills directory, or `./references/` when references live alongside the skill (e.g. in a repo clone). Apply rules based on changed file types. Deduplicate when multiple file types map to the same reference.
 
 **Base (always)**: `references/security.md` + `references/code-quality.md`
 
@@ -406,7 +410,7 @@ Review feedback is in **English by default**. If the user requests another langu
 ## Review: [MR/PR Title]
 
 **Project**: [project path] | **MR/PR**: [link] | **Pipeline**: [status]
-**Verdict**: **[APPROVE | REQUEST CHANGES | NEEDS DISCUSSION]**
+**Verdict**: **[APPROVE | REQUEST_CHANGES | COMMENT]**
 
 > [1-2 sentences: summary and overall impression]
 
@@ -459,7 +463,7 @@ When posting comments on the MR/PR:
 3. Use GitLab/GitHub suggestion syntax for code modifications
 4. Keep a respectful and collaborative tone
 5. **Do not create a thread/note on pipeline status** — status stays in the report header only
-6. **IA disclosure (mandatory)** — append to each posted comment: `---` then `*AI-assisted review (skill frontend-code-review)*` (or `*Review assistée par skill frontend-code-review*` in French if user requested French)
+6. **AI disclosure (mandatory)** — append to each posted comment: `---` then `*AI-assisted review (skill frontend-code-review)*` (or `*Review assistée par skill frontend-code-review*` in French if user requested French)
 
 ## Resources
 

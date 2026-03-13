@@ -47,7 +47,8 @@ Focus on client-side vulnerabilities and third-party integrations.
 - Dependency version format inconsistent with project convention (check existing `package.json`)
 - Dependency added without justification (bundle size impact)
 - Importing from untrusted CDNs without `integrity` check
-- Outdated dependencies with known CVEs
+- **Known vulnerabilities (CVE)**: Do not assume real-time CVE knowledge. Rely on CI logs (e.g. check if an `npm audit` or equivalent job failed) or use a web search tool when a new major package is introduced. Flag when CI reports vulnerabilities; for ad-hoc checks, use external lookup
+- Outdated dependencies with known CVEs (when surfaced by CI or manual audit)
 
 ## CORS & Headers
 
