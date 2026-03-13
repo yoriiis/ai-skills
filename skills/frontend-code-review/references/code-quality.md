@@ -51,6 +51,14 @@ Checklist for code quality review: error handling, front-end performance, bounda
 
 ---
 
+## Readability
+
+### Naming in loops
+
+- In loops, prefer context-specific variable names (e.g. `article in articles`) to avoid scope confusion in nested loops
+
+---
+
 ## Error Handling
 
 ### Consistent Pattern
