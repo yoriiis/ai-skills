@@ -56,13 +56,7 @@ Reference standards for Twig template review. Generic rules applicable to any Sy
 
 ## Class Naming in Templates
 
-- BEM class naming with camelCase state modifiers:
-
-```twig
-<div class="component {{ isActive ? 'isActive' }}">
-```
-
-- State classes are standalone: `isActive`, `isDisabled`, `isLoading` (not prefixed with block name)
+Respect the convention already present in existing template and CSS files. Detect class naming patterns (BEM, utility classes, etc.) from the codebase and match them. If no convention is detected, do not impose.
 
 ## Quotes
 

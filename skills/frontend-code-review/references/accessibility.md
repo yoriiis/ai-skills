@@ -40,7 +40,7 @@ Reference standards for accessibility review.
 
 ## Semantic HTML
 
-For general HTML semantics (headings, lists, element hierarchy) → see `references/html.md`. This section covers accessibility-specific semantic concerns:
+This section covers accessibility-specific semantic concerns. For general HTML structure and W3C syntax → see `references/html.md`.
 
 - Heading hierarchy skips break screen reader navigation (`h1` → `h3` without `h2`)
 - Non-semantic interactive elements (`<div onclick>`) are invisible to assistive technologies — use `<button>` or `<a>`

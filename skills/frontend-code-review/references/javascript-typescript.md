@@ -37,7 +37,7 @@ Only apply if the project has a `tsconfig.json`. If the project is in plain JS, 
 - Avoid code duplication — factor shared logic
 - No anonymous functions in event listeners — use named methods and `.bind(this)` in constructor. Enables proper `removeEventListener` and unit testing
 - Use `setAttribute` / `getAttribute` to manipulate element attributes (not direct property access like `element.dataset`)
-- Convert NodeList to Array with spread `[...nodeList]` rather than `Array.from(nodeList)` — `NodeList.forEach` is not supported on older browsers
+- Convert NodeList to Array with `[...nodeList]` or `Array.from(nodeList)` — both are equivalent in modern environments. Prefer spread for brevity when destructuring
 
 ## DOM & Events
 
@@ -74,13 +74,13 @@ export default class ComponentName {
 - Bind event handlers in constructor when they need `this` context
 - Order class methods logically for readability (constructor → init → addEvents → handlers → utilities)
 
-## JSX/TSX (jsx-dom / jsx-dom-cjs)
+## JSX/TSX
 
-Some projects use `jsx-dom` or `jsx-dom-cjs` for JSX rendering to DOM elements. Check `package.json` for which one. This is **NOT React**:
+Check `package.json` for `react`, `preact`, or `jsx-dom`. All JSX-based frameworks use `className` (not `class`) for CSS classes — `class` is reserved in JavaScript; Biome/ESLint enforce `className`. This rule applies regardless of the framework.
 
 - Use `className` (not `class`) for CSS classes in JSX
-- Components return DOM elements, not virtual DOM
-- Every dependency (SVG, CSS, JS) must be explicitly imported in the component that uses it — never rely on another component having already imported it. It works by coincidence until that other component is removed from the page
+- For React/Preact: components return virtual DOM; adapt to project conventions (hooks, patterns)
+- For jsx-dom/jsx-dom-cjs: components return DOM elements. Every dependency (SVG, CSS, JS) must be explicitly imported in the component that uses it — never rely on another component having already imported it
 
 ## Naming Conventions
 
@@ -93,10 +93,7 @@ Some projects use `jsx-dom` or `jsx-dom-cjs` for JSX rendering to DOM elements. 
 
 ## Error Handling
 
-- Use `console.warn` for non-critical errors (not `console.log`)
-- Always wrap async operations in try/catch
-- **TypeScript Narrowing**: In TS, caught errors are `unknown`. Ensure they are properly narrowed before usage (e.g., `if (error instanceof Error)`) to maintain type safety
-- Include context in error messages: `[ComponentName] methodName error`
+For error handling rules (try/catch, async, swallowed exceptions) → see `references/code-quality.md`.
 
 ## JSDoc
 

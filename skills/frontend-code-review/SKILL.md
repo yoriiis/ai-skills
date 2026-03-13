@@ -103,6 +103,15 @@ Use `search` (scope: `blobs`, project scoped) to detect project tooling:
 - **CI**: check `.gitlab-ci.yml` or `.github/workflows/*` for pipeline structure
 - **Build stripping**: does the build strip `console.log`? (check rspack/webpack config or Biome config)
 
+### Linter & Formatter detection
+
+Use `search` (scope: `blobs`, project scoped) to detect presence of these config files:
+
+- **Linter**: `biome.json`, `.eslintrc`, `.eslintrc.js`, `eslint.config.js`, `eslint.config.mjs`, `.stylelintrc`
+- **Formatter**: `biome.json`, `.prettierrc`, `prettier.config.js`
+
+When linter and formatter are detected, trust them for style and format — see Tooling calibration below.
+
 ### Project-specific rules
 
 Check if the project has its own coding rules or conventions:
@@ -181,7 +190,7 @@ Load references **after** diffs are fetched. Apply rules based on changed file t
 | Test files changed (`*.test.*`, `*.spec.*`, `**/__tests__/*`)                                   | `testing.md`                              |
 | Application code changed (JS/TS, HTML, Twig, components) **without** corresponding test changes | `testing.md` (to check for missing tests) |
 
-**Scope**: **Frontend** and **CI** are in scope (tables above define which files and references). **Backend** (PHP, Python, Go, Ruby, Java, Kotlin, etc.) is out of scope — do not load references for backend files, do not comment on them. CI config (`.gitlab-ci.yml`, `.github/workflows/*`) is always analyzed. If a MR contains only backend files, state that the skill covers frontend and CI only and skip the code review.
+**Scope**: **Frontend** and **CI** are in scope (tables above define which files and references). **Backend** (PHP, Python, Go, Ruby, Java, Kotlin, etc.) is out of scope — do not load references, do not comment. **Do not read or analyze the diff of backend files** if the MR contains mixed frontend/backend changes — skip those files entirely to save tokens and focus on frontend. CI config (`.gitlab-ci.yml`, `.github/workflows/*`) is always analyzed. If a MR contains only backend files, state that the skill covers frontend and CI only and skip the code review.
 
 ## Source of truth: MR diff only
 
@@ -191,6 +200,8 @@ Load references **after** diffs are fetched. Apply rules based on changed file t
 - **Extra context**: if needed, use `get_repository_file` to read a file on the source branch of the remote repo — not the workspace. Reason: the diff describes changes on the source branch; we need the file state as it will be after merge, and the workspace may be out of sync
 - **Aligned with diff**: before asking "remove X", verify that X is still present in the diff (added/modified lines). If X only appears in removed lines (-), do not ask to remove it — it is already done. Feedback must target only what will remain after merge
 - **No confusion**: do not mix workspace state with MR state
+
+**CRITICAL — No hallucination outside diff**: If the code you are critiquing is NOT explicitly visible in the added or modified lines (usually marked with `+`), DO NOT mention it — unless it is a fatal security flaw. LLMs tend to infer context; never comment on unchanged code as if it were part of the change.
 
 ## Review Checklist
 
@@ -444,16 +455,16 @@ When posting comments on the MR/PR:
 
 See **Reference loading** above for when to load each file.
 
-| File                                  | Purpose                                          |
-| ------------------------------------- | ------------------------------------------------ |
-| `references/javascript-typescript.md` | JS/TS conventions, DOM, events, class patterns   |
-| `references/html.md`                  | Semantics, script loading, W3C syntax            |
-| `references/css.md`                   | PostCSS, BEM, custom properties, responsive      |
-| `references/twig.md`                  | Twig template conventions, includes, defaults    |
-| `references/accessibility.md`         | SVG a11y, focus management, ARIA, semantic HTML  |
-| `references/security.md`              | XSS, third-party scripts, secrets, runtime risks |
-| `references/code-quality.md`          | Error handling, performance, boundary conditions |
-| `references/testing.md`               | Jest conventions, test structure                 |
-| `references/project-structure.md`     | Directory layout, package.json, CHANGELOG        |
-| `references/ci-cd.md`                 | Pipeline, GitHub Actions, GitLab CI              |
-| `references/images-assets.md`         | Image format, size, SVG optimization, sprites    |
+| File                                  | Purpose                                           |
+| ------------------------------------- | ------------------------------------------------- |
+| `references/javascript-typescript.md` | JS/TS conventions, DOM, events, class patterns    |
+| `references/html.md`                  | Semantics, script loading, W3C syntax             |
+| `references/css.md`                   | Detect convention from files, enforce consistency |
+| `references/twig.md`                  | Twig template conventions, includes, defaults     |
+| `references/accessibility.md`         | SVG a11y, focus management, ARIA, semantic HTML   |
+| `references/security.md`              | XSS, third-party scripts, secrets, runtime risks  |
+| `references/code-quality.md`          | Error handling, performance, boundary conditions  |
+| `references/testing.md`               | Jest conventions, test structure                  |
+| `references/project-structure.md`     | Directory layout, package.json, CHANGELOG         |
+| `references/ci-cd.md`                 | Pipeline, GitHub Actions, GitLab CI               |
+| `references/images-assets.md`         | Image format, size, SVG optimization, sprites     |
