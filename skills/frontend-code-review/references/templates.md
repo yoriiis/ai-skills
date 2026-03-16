@@ -1,13 +1,13 @@
 # Templates
 
-Reference standards for server-side HTML template review. Generic rules applicable to Server-side HTML templating engines (Twig, Blade, Nunjucks, Liquid, etc.).
+Reference standards for server-side HTML template review. Generic rules applicable to server-side HTML templating engines (e.g. Twig).
 
 ---
 
 ## General Principles (Applicable to JSX, Vue, Twig, etc.)
 
 - **No Business Logic**: Templates must remain strictly presentational. Complex data manipulation, filtering, or business rules must be handled in controllers, services, or hooks, not in the template.
-- **Component complexity & scope**: See `references/architecture.md` (Component Complexity, framework-agnostic). Flag oversized or multi-responsibility templates/components as **Important** and suggest splitting; check that changes belong in the current component.
+- **Component complexity & scope** (framework-agnostic): flag oversized or multi-responsibility templates/components as **Important** and suggest splitting; check that changes belong in the current component.
 
 ## Twig Specifics
 

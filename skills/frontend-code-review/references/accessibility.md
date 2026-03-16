@@ -10,7 +10,7 @@ Reference standards for accessibility review.
 - SVG inside a button/link (icon-only): add a `<span class="sr-only">` with description
 - Informational SVGs (not in button/link): use `aria-hidden="false"`, `role="img"`, `aria-label="description"`
 - SVG sprite parent: `<svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;">`
-- SVGs must use `viewBox` (not fixed `width`/`height`), exported edge-to-edge — for sprite optimization and SVGO → see `assets.md`
+- SVGs must use `viewBox` (not fixed `width`/`height`), exported edge-to-edge — consider sprite optimization and SVGO
 
 ## Focus Management
 
@@ -30,7 +30,6 @@ Reference standards for accessibility review.
 ## Images
 
 - All `<img>` must have an `alt` attribute (empty `alt=""` for decorative images)
-- For image format, file size, and optimization → see `assets.md`
 
 ## ARIA & Dynamic Content
 
@@ -41,7 +40,7 @@ Reference standards for accessibility review.
 
 ## Semantic HTML
 
-This section covers accessibility-specific semantic concerns. For general HTML structure and W3C syntax → see `references/html.md`.
+This section covers accessibility-specific semantic concerns.
 
 - Heading hierarchy skips break screen reader navigation (`h1` → `h3` without `h2`)
 - Non-semantic interactive elements (`<div onclick>`) are invisible to assistive technologies — use `<button>` or `<a>`

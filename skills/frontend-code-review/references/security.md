@@ -3,7 +3,7 @@
 Checklist for security review, adapted for front-end web projects.
 Focus on client-side vulnerabilities and third-party integrations.
 
-> **Source of truth for security strategy**: why we sanitize, XSS principles, runtime risks. For concrete detection patterns (e.g. flagging `innerHTML` as Blocking) → [js-ts.md](js-ts.md)
+> **Source of truth for security strategy**: why we sanitize, XSS principles, runtime risks. For concrete detection patterns (e.g. flagging `innerHTML` as Blocking), apply the rules loaded by the skill for JS/TS.
 
 ---
 
@@ -11,7 +11,7 @@ Focus on client-side vulnerabilities and third-party integrations.
 
 - **XSS**: Unsafe HTML injection via `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write` with user/dynamic input
 - If user HTML must be rendered: use a sanitizer (DOMPurify, etc.) with strict allowlist — prefer `textContent` or escaping
-- **Template injection**: Unescaped variables in Twig templates or string interpolation
+- **Template injection**: Unescaped variables in server-side templates or string interpolation
 - **Prototype pollution**: Unsafe object merging (`Object.assign`, spread) with user-controlled data
 - **URL manipulation**: User input in `href`, `src`, `action` attributes without validation (javascript: protocol, data: URIs)
 

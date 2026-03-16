@@ -83,18 +83,14 @@ export default class ComponentName {
 
 ## Testability
 
-Write functions as if they will be tested—even if no tests exist.
+Write functions as if they will be tested—even if no tests exist. Use the following detection rules:
 
-> **SOLID Principle**: Single Responsibility Principle (SRP) — a function should do only what its name indicates.
-
-**Flag as Important:**
+**SRP (Single Responsibility) — Flag as Important:**
 
 - Function with side effects not indicated by name (`getUser()` that also updates the database)
 - Function doing 2+ unrelated things (validation + API call + DOM manipulation)
 
-> **SOLID Principle**: Dependency Inversion Principle (DIP) — depend on abstractions, not concrete implementations.
-
-**Flag as Suggestion:**
+**DIP (Dependency Inversion) — Flag as Suggestion:**
 
 - Hard-coded imports/instantiation inside functions
 - Anonymous functions in event listeners (use named methods)
@@ -138,7 +134,7 @@ Any function that returns a value must use a prefix indicating the return type. 
 
 **Exception for reactive components:** Functions like `fetchXxx()`, `loadXxx()` or `getXxx()` may return `void` without triggering an **Important** alert when used in a **reactive component context** (React, Vue, Svelte) where they serve to update internal or local state (e.g., calling a state setter). In such cases, the semantic intent is "fetch and update state", not "fetch and return data".
 
-**Exception for event handlers:** Names prefixed with `onXxx` (e.g. `onClick`, `onSubmit`) or `handleXxx` (e.g. `handleClick`, `handleSubmit`) are accepted for functions that only react to an event or delegate an action, with no meaningful return value. Do not require `is`/`get` prefixes for these.
+**Callbacks and event handlers:** Their role is to react to an event or delegate an action, not to return data. They use the `onXxx` (e.g. `onClick`) or `handleXxx` (e.g. `handleClick`) convention; the return-type prefix table above does not apply to them. Do not flag these for missing `is`/`get` prefixes.
 
 **Flag as Important:**
 

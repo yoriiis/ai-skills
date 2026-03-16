@@ -10,14 +10,15 @@ Reference standards for project organization, package management, and front-end 
 
 - A function should do only what its name indicates
 - If you need "and" to describe it, split it
-- See `references/js-ts.md` for JS/TS detection patterns
+- A function with side effects not indicated by its name (e.g. `getUser()` that also updates the database) violates SRP
+- A function doing two or more unrelated things (e.g. validation + API call + DOM manipulation) should be split
 
 ### Dependency Inversion Principle (DIP)
 
 - Depend on abstractions, not concrete implementations
 - Do not instantiate heavy dependencies (API clients, Logger) inside functions — pass them as parameters or via constructor to enable mocking in tests
 - Inject dependencies via constructor/parameters
-- See `references/js-ts.md` for JS/TS patterns
+- Hard-coded imports or instantiation inside functions make testing and substitution harder; prefer injection
 
 ### Testability by Design
 
@@ -69,7 +70,9 @@ Reference standards for project organization, package management, and front-end 
 - Dependency version format must follow the project convention — some projects pin exact versions, others use `^` or `~`. Check existing `package.json` and stay consistent
 - For libraries: check `"exports"` and `"files"` fields are properly configured if the package is published
 
-### Lockfiles
+---
+
+## Dependency Management
 
 When **dependencies** in a manifest are modified (added, removed, or version changed), the corresponding lockfile must be updated and committed in the same MR. Flag as **Blocking** only if dependencies changed and the lockfile is missing or not updated.
 

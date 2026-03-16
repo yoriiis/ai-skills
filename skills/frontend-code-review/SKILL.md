@@ -40,6 +40,10 @@ If the answer to all four is "no", it's noise. Don't report it as a primary find
 
 ## Workflow
 
+### Reading Protocol (Gatekeeper)
+
+You are an agent with limited memory. You do **not** have the content of files in the `./references/` folder at startup. You **must** build the complete inventory of **file extensions** present in the Diff (e.g. `.ts`, `.twig`, `.css`) **before** using any file-reading tool. Load only the reference files **strictly required** as listed in the mapping table (Reference loading).
+
 **Top-Down Mental Model:**
 
 1. Understand the intent/spec
@@ -69,7 +73,7 @@ When asked to review a MR/PR:
 4. Fetch MR/PR metadata (GitLab MCP `get_merge_request`, or GitHub equivalent)
 5. Fetch **full** diffs via MCP (all pages if paginated); build inventory of changed files (added / modified / deleted)
 6. Fetch pipeline/CI status
-7. Load relevant references based on changed file types (see Reference loading). Frontend and CI only — backend files are out of scope.
+7. Load relevant references based on changed file types (see Reference loading). Only what is in scope (Frontend, CI, server templates e.g. Twig) is reviewed; everything not listed in the tables below is out of scope.
 8. Apply the review checklist (Blocking → Important → Suggestion → Attention Required → Minor), using contextual analysis and duplication detection
 9. Format findings using the output template (Phase 1 — report in chat)
 10. Ask which findings to post (Phase 2), then post selected ones with AI mention (Phase 3)
@@ -206,37 +210,37 @@ Based on the profile, adjust what you report: when a safety net is missing (no l
 
 ### Reference loading
 
-Load references **after** diffs are fetched, using the paths in the tables below (e.g. `references/security.md`). Apply rules based on changed file types. Deduplicate when multiple file types map to the same reference.
+Load references **after** diffs are fetched, using the paths in the tables below (e.g. `./references/security.md`). Apply rules based on changed file types. Deduplicate when multiple file types map to the same reference.
 
-**Base (always)**: `references/security.md` + `references/code-quality.md`
+**Base (always)**: `./references/security.md` + `./references/code-quality.md`
 
 **By changed file type**:
 
-| File pattern                                                     | References to load                                                                                 |
-| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `*.js`, `*.ts`, `*.mjs`, `*.cjs`                                 | `references/js-ts.md`                                                                              |
-| `*.jsx`, `*.tsx`                                                 | `references/js-ts.md` + `references/accessibility.md` (UI components)                              |
-| `*.css`, `*.scss`, `*.less`                                      | `references/css.md`                                                                                |
-| `*.html`                                                         | `references/html.md` + `references/accessibility.md`                                               |
-| `*.twig`, `*.blade.php`, `*.liquid`, `*.njk`                     | `references/templates.md` + `references/html.md` + `references/accessibility.md`                   |
-| `*.vue`, `*.svelte`                                              | `references/js-ts.md` + `references/html.md` + `references/css.md` + `references/accessibility.md` |
-| `*.png`, `*.jpg`, `*.jpeg`, `*.gif`, `*.webp`, `*.avif`, `*.svg` | `references/assets.md`                                                                             |
+| File pattern                                                     | References to load                                                                                                                          |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `*.js`, `*.ts`, `*.mjs`, `*.cjs`                                 | `./references/js-ts.md` + `./references/architecture.md` + `./references/templates.md`                                                      |
+| `*.jsx`, `*.tsx`                                                 | `./references/js-ts.md` + `./references/architecture.md` + `./references/templates.md` + `./references/accessibility.md` (UI components)    |
+| `*.css`, `*.scss`, `*.less`                                      | `./references/css.md`                                                                                                                       |
+| `*.html`                                                         | `./references/html.md` + `./references/accessibility.md`                                                                                    |
+| `*.twig`                                                         | `./references/templates.md` + `./references/architecture.md` + `./references/html.md` + `./references/accessibility.md`                     |
+| `*.vue`, `*.svelte`                                              | `./references/js-ts.md` + `./references/architecture.md` + `./references/html.md` + `./references/css.md` + `./references/accessibility.md` |
+| `*.png`, `*.jpg`, `*.jpeg`, `*.gif`, `*.webp`, `*.avif`, `*.svg` | `./references/assets.md`                                                                                                                    |
 
 **By changed content**:
 
-| Content                                       | Reference                    |
-| --------------------------------------------- | ---------------------------- |
-| `package.json`, `tsconfig.json`, config files | `references/architecture.md` |
-| `.gitlab-ci.yml`, `.github/workflows/*`       | `references/ci-cd.md`        |
+| Content                                       | Reference                      |
+| --------------------------------------------- | ------------------------------ |
+| `package.json`, `tsconfig.json`, config files | `./references/architecture.md` |
+| `.gitlab-ci.yml`, `.github/workflows/*`       | `./references/ci-cd.md`        |
 
 **By review scope**:
 
-| Condition                                                                                       | Reference                                            |
-| ----------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| Test files changed (`*.test.*`, `*.spec.*`, `**/__tests__/*`)                                   | `references/testing.md`                              |
-| Application code changed (JS/TS, HTML, Twig, components) **without** corresponding test changes | `references/testing.md` (to check for missing tests) |
+| Condition                                                                                       | Reference                                              |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Test files changed (`*.test.*`, `*.spec.*`, `**/__tests__/*`)                                   | `./references/testing.md`                              |
+| Application code changed (JS/TS, HTML, Twig, components) **without** corresponding test changes | `./references/testing.md` (to check for missing tests) |
 
-**Scope**: **Frontend** and **CI** are in scope (tables above define which files and references). **Backend** (PHP, Python, Go, Ruby, Java, Kotlin, etc.) is out of scope — do not load references, do not comment. **Do not read or analyze the diff of backend files** if the MR/PR contains mixed frontend/backend changes — skip those files entirely to save tokens and focus on frontend. **Server-side templating files** (Twig, Blade, Liquid, Nunjucks) are in scope because they affect frontend rendering; analyze them even when they live in backend-typed directories (e.g. `templates/`, `views/`). CI config (`.gitlab-ci.yml`, `.github/workflows/*`) is always analyzed. If the MR/PR contains only backend files, state that the skill covers frontend and CI only and skip the code review.
+**Scope (defined by inclusion only)** — What is **in scope** is defined by the tables above: Frontend files (JS/TS, HTML, CSS, components, assets); server-side templates (e.g. Twig) because they control HTML structure and accessibility — analyze them even in `templates/`, `views/`; CI config (`.gitlab-ci.yml`, `.github/workflows/*`). **Everything not mentioned in these tables is out of scope.** Do not load references or comment on out-of-scope files. For mixed MR/PRs, do not read or analyze the diff of out-of-scope files. If the MR/PR contains only out-of-scope files, state that the skill covers frontend and CI only and skip the code review.
 
 ## Source of truth: remote only (no local workspace)
 
@@ -347,7 +351,7 @@ Rely strictly on the loaded reference files (`accessibility.md`, `architecture.m
 
 Group these in a dedicated **Minor** section. One line per item. **Skip style items entirely when CI runs linter/formatter** — focus on what tools cannot catch.
 
-- Code hygiene: `console.log`, `const`/`let`, trailing whitespace, unused imports — only when no linter/formatter in CI. See `references/js-ts.md`
+- Code hygiene: `console.log`, `const`/`let`, trailing whitespace, unused imports — only when no linter/formatter in CI. See `./references/js-ts.md`
 - Import ordering preferences
 - Minor naming improvements that don't affect readability
 - CHANGELOG section title format (`### Updates` vs `### Features`)
@@ -360,11 +364,7 @@ Group these in a dedicated **Minor** section. One line per item. **Skip style it
 
 ## Language
 
-Choose the output language in this order of priority:
-
-1. **User's message language** — If the user asked for the review in a given language (e.g. "Peux-tu reviewer la MR !123"), respond in that language.
-2. **MR/PR language** — Otherwise, detect the language of the MR/PR title and/or description and respond in that language.
-3. **Default** — If neither is detectable or is ambiguous, use English. An explicit user request ("respond in English", "in French please") overrides detection.
+Use the same language as the **user's message** (the message they used to ask for the review). If the language is ambiguous or cannot be detected, use English by default.
 
 ## Output Template
 
@@ -433,16 +433,16 @@ When posting comments on the MR/PR:
 
 See **Reference loading** above for when to load each file.
 
-| File                          | Purpose                                                                                          |
-| ----------------------------- | ------------------------------------------------------------------------------------------------ |
-| `references/js-ts.md`         | JS/TS conventions, semantic naming, testability, DOM, events, class patterns                     |
-| `references/html.md`          | Semantics, script loading, W3C syntax                                                            |
-| `references/css.md`           | Detect convention from files, enforce consistency                                                |
-| `references/templates.md`     | Server-side template conventions (Twig, Blade, Nunjucks, Liquid), includes, defaults             |
-| `references/accessibility.md` | SVG a11y, focus management, ARIA, semantic HTML                                                  |
-| `references/security.md`      | XSS, third-party scripts, secrets, runtime risks                                                 |
-| `references/code-quality.md`  | Error handling, performance, boundary conditions, SOLID principles                               |
-| `references/testing.md`       | Test structure and conventions (framework-agnostic)                                              |
-| `references/architecture.md`  | Project structure & tooling, architecture principles (SOLID, SRP, DIP), SoC, coupling, data flow |
-| `references/ci-cd.md`         | Pipeline, GitHub Actions, GitLab CI                                                              |
-| `references/assets.md`        | Image format, size, SVG optimization, sprites                                                    |
+| File                            | Purpose                                                                                          |
+| ------------------------------- | ------------------------------------------------------------------------------------------------ |
+| `./references/js-ts.md`         | JS/TS conventions, semantic naming, testability, DOM, events, class patterns                     |
+| `./references/html.md`          | Semantics, script loading, W3C syntax                                                            |
+| `./references/css.md`           | Detect convention from files, enforce consistency                                                |
+| `./references/templates.md`     | Server-side template conventions (e.g. Twig), includes, defaults                                 |
+| `./references/accessibility.md` | SVG a11y, focus management, ARIA, semantic HTML                                                  |
+| `./references/security.md`      | XSS, third-party scripts, secrets, runtime risks                                                 |
+| `./references/code-quality.md`  | Error handling, performance, boundary conditions, SOLID principles                               |
+| `./references/testing.md`       | Test structure and conventions (framework-agnostic)                                              |
+| `./references/architecture.md`  | Project structure & tooling, architecture principles (SOLID, SRP, DIP), SoC, coupling, data flow |
+| `./references/ci-cd.md`         | Pipeline, GitHub Actions, GitLab CI                                                              |
+| `./references/assets.md`        | Image format, size, SVG optimization, sprites                                                    |
