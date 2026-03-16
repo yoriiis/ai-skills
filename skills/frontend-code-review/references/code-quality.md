@@ -83,6 +83,11 @@ Checklist for code quality review: error handling, front-end performance, bounda
 - Unused CSS/JS loaded on every page
 - Missing image optimization or modern formats (WebP, AVIF)
 
+### Tree-shaking / Imports
+
+- Avoid imports that prevent tree-shaking (e.g. `import { last } from 'lodash'` can pull in the whole library depending on the bundler). Prefer targeted imports (e.g. `import last from 'lodash/last'`) or native equivalents when available
+- Flag as **Suggestion** by default; **Important** if the MR already highlights bundle size issues
+
 ### Computation
 
 - Heavy computation on main thread without Web Worker

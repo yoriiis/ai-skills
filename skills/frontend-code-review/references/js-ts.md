@@ -138,6 +138,8 @@ Any function that returns a value must use a prefix indicating the return type. 
 
 **Exception for reactive components:** Functions like `fetchXxx()`, `loadXxx()` or `getXxx()` may return `void` without triggering an **Important** alert when used in a **reactive component context** (React, Vue, Svelte) where they serve to update internal or local state (e.g., calling a state setter). In such cases, the semantic intent is "fetch and update state", not "fetch and return data".
 
+**Exception for event handlers:** Names prefixed with `onXxx` (e.g. `onClick`, `onSubmit`) or `handleXxx` (e.g. `handleClick`, `handleSubmit`) are accepted for functions that only react to an event or delegate an action, with no meaningful return value. Do not require `is`/`get` prefixes for these.
+
 **Flag as Important:**
 
 - Any function starting with `get` or `fetch` that has no `return` statement or explicitly returns `undefined`/`void`

@@ -13,6 +13,17 @@ Reference standards for test review. Only enforce rules that match the target pr
 - **Unit Test Isolation**: Unit test each function independently. Mock all outgoing/external calls (APIs, other modules, heavy dependencies) to isolate the function and prevent side effects.
 - **Test Variations**: Write exactly one test case (`it` or `test`) per variation or edge case.
 
+### Shadow mocks
+
+- **Do not mock what you are testing.** Check that a mock does not replace critical business logic that the test is supposed to validate. If the test mocks the core of the SUT or a dependency whose behavior is part of the expected contract, flag as **Important** (tautological test or false positive).
+- Ask: "What I am mocking — is it an external boundary (API, I/O) or the logic I claim to be testing?"
+
+### Snapshot tests
+
+- **Discourage snapshots for logic.** Snapshot tests must not be the only way to validate business behavior or complex conditional branches. Prefer targeted assertions on behavior.
+- **Limit to purely presentational components.** Snapshots are acceptable for stable UI components (layout, DOM structure). For anything else, prefer explicit behavior assertions.
+- **Avoid tests that pass by default.** Flag snapshots that cover logic (calculations, business conditions) as **Suggestion** or **Important** depending on context (undetected regression risk).
+
 ## Test Structure & Philosophy
 
 - Test files in `__tests__/` directory, next to the code they cover

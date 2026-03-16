@@ -212,15 +212,15 @@ Load references **after** diffs are fetched, using the paths in the tables below
 
 **By changed file type**:
 
-| File pattern                                                     | References to load                                                               |
-| ---------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `*.js`, `*.ts`, `*.mjs`, `*.cjs`                                 | `references/js-ts.md`                                                            |
-| `*.jsx`, `*.tsx`                                                 | `references/js-ts.md` + `references/accessibility.md` (UI components)            |
-| `*.css`, `*.scss`, `*.less`                                      | `references/css.md`                                                              |
-| `*.html`                                                         | `references/html.md` + `references/accessibility.md`                             |
-| `*.twig`, `*.blade.php`, `*.liquid`, `*.njk`                     | `references/templates.md` + `references/html.md` + `references/accessibility.md` |
+| File pattern                                                     | References to load                                                                                 |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `*.js`, `*.ts`, `*.mjs`, `*.cjs`                                 | `references/js-ts.md`                                                                              |
+| `*.jsx`, `*.tsx`                                                 | `references/js-ts.md` + `references/accessibility.md` (UI components)                              |
+| `*.css`, `*.scss`, `*.less`                                      | `references/css.md`                                                                                |
+| `*.html`                                                         | `references/html.md` + `references/accessibility.md`                                               |
+| `*.twig`, `*.blade.php`, `*.liquid`, `*.njk`                     | `references/templates.md` + `references/html.md` + `references/accessibility.md`                   |
 | `*.vue`, `*.svelte`                                              | `references/js-ts.md` + `references/html.md` + `references/css.md` + `references/accessibility.md` |
-| `*.png`, `*.jpg`, `*.jpeg`, `*.gif`, `*.webp`, `*.avif`, `*.svg` | `references/assets.md`                                                           |
+| `*.png`, `*.jpg`, `*.jpeg`, `*.gif`, `*.webp`, `*.avif`, `*.svg` | `references/assets.md`                                                                             |
 
 **By changed content**:
 
@@ -236,7 +236,7 @@ Load references **after** diffs are fetched, using the paths in the tables below
 | Test files changed (`*.test.*`, `*.spec.*`, `**/__tests__/*`)                                   | `references/testing.md`                              |
 | Application code changed (JS/TS, HTML, Twig, components) **without** corresponding test changes | `references/testing.md` (to check for missing tests) |
 
-**Scope**: **Frontend** and **CI** are in scope (tables above define which files and references). **Backend** (PHP, Python, Go, Ruby, Java, Kotlin, etc.) is out of scope — do not load references, do not comment. **Do not read or analyze the diff of backend files** if the MR/PR contains mixed frontend/backend changes — skip those files entirely to save tokens and focus on frontend. CI config (`.gitlab-ci.yml`, `.github/workflows/*`) is always analyzed. If the MR/PR contains only backend files, state that the skill covers frontend and CI only and skip the code review.
+**Scope**: **Frontend** and **CI** are in scope (tables above define which files and references). **Backend** (PHP, Python, Go, Ruby, Java, Kotlin, etc.) is out of scope — do not load references, do not comment. **Do not read or analyze the diff of backend files** if the MR/PR contains mixed frontend/backend changes — skip those files entirely to save tokens and focus on frontend. **Server-side templating files** (Twig, Blade, Liquid, Nunjucks) are in scope because they affect frontend rendering; analyze them even when they live in backend-typed directories (e.g. `templates/`, `views/`). CI config (`.gitlab-ci.yml`, `.github/workflows/*`) is always analyzed. If the MR/PR contains only backend files, state that the skill covers frontend and CI only and skip the code review.
 
 ## Source of truth: remote only (no local workspace)
 
@@ -360,7 +360,11 @@ Group these in a dedicated **Minor** section. One line per item. **Skip style it
 
 ## Language
 
-Review feedback is in **English by default**. If the user specifies another language, write the feedback in that language.
+Choose the output language in this order of priority:
+
+1. **User's message language** — If the user asked for the review in a given language (e.g. "Peux-tu reviewer la MR !123"), respond in that language.
+2. **MR/PR language** — Otherwise, detect the language of the MR/PR title and/or description and respond in that language.
+3. **Default** — If neither is detectable or is ambiguous, use English. An explicit user request ("respond in English", "in French please") overrides detection.
 
 ## Output Template
 

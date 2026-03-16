@@ -67,5 +67,13 @@ Reference standards for project organization, package management, and front-end 
 ### Package.json
 
 - Dependency version format must follow the project convention — some projects pin exact versions, others use `^` or `~`. Check existing `package.json` and stay consistent
-- If `package.json` is modified (dependency added, removed, or version changed), `package-lock.json` must be updated and committed in the same MR. Same for `composer.json` → `composer.lock`. A `package.json` change without its lockfile is a red flag
 - For libraries: check `"exports"` and `"files"` fields are properly configured if the package is published
+
+### Lockfiles
+
+When **dependencies** in a manifest are modified (added, removed, or version changed), the corresponding lockfile must be updated and committed in the same MR. Flag as **Blocking** only if dependencies changed and the lockfile is missing or not updated.
+
+- `package.json` → `package-lock.json` (or `yarn.lock`, `pnpm-lock.yaml` per project) — required only when `dependencies`, `devDependencies`, or `optionalDependencies` change
+- `composer.json` → `composer.lock` — required only when `require` / `require-dev` (or equivalent) change
+
+Do **not** require a lockfile update for changes that do not affect the dependency tree (e.g. `scripts`, `name`, `description`, `engines`, config keys). A manifest change without its lockfile is a red flag only when dependencies were actually modified.

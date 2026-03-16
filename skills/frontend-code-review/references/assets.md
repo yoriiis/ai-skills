@@ -41,3 +41,11 @@ When SVG is used in a **sprite** (e.g. `<symbol>` inside a shared `<svg>`):
 - "Could this image be served in a more efficient format?"
 - "Has this SVG been run through SVGO?"
 - "Is this sprite symbol using only viewBox (no width/height)?"
+
+---
+
+## Fonts
+
+- Use `font-display: swap` (or project-appropriate value) to avoid FOIT and improve LCP/CLS
+- Preload critical fonts above the fold with `<link rel="preload">` when relevant
+- Flag as **Suggestion** by default; **Important** if blocking fonts lack `font-display` on immediately visible text
