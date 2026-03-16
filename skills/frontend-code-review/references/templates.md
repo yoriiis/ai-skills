@@ -7,8 +7,7 @@ Reference standards for server-side HTML template review. Generic rules applicab
 ## General Principles (Applicable to JSX, Vue, Twig, etc.)
 
 - **No Business Logic**: Templates must remain strictly presentational. Complex data manipulation, filtering, or business rules must be handled in controllers, services, or hooks, not in the template.
-- **Component Complexity**: Think in components. If a template/component grows too large, has too many conditionals, or takes on multiple responsibilities, flag it as an **Important** architectural issue and suggest splitting it into smaller, focused components.
-- **Scope & Boundaries**: Analyze if a change belongs in the current component. Flag changes that seem "out of scope" for the component's primary responsibility.
+- **Component complexity & scope**: See `references/architecture.md` (Component Complexity, framework-agnostic). Flag oversized or multi-responsibility templates/components as **Important** and suggest splitting; check that changes belong in the current component.
 
 ## Twig Specifics
 

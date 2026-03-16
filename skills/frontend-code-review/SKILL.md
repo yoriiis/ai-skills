@@ -24,15 +24,17 @@ If the answer to all four is "no", it's noise. Don't report it as a primary find
 - **Important** — Should fix, significant improvement. Must include WHY it matters and the consequence
 - **Suggestion** — Nice to have. Lower impact. Explain the concrete benefit. Use for personal preferences or optional improvements
 - **Minor** — Non-blocking items. One line per item in a dedicated Minor section. Never let these overshadow Blocking/Important
+- **Attention Required (Human Review)** — Use this to flag complex visual changes, nuanced business logic, or ambiguous product specs that AI cannot reliably verify. Prompt the human reviewer to look at it specifically.
 
 ### Severity Level Examples
 
-| Level          | Examples                                                                                                                     | Why This Level                                                      |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| **Blocking**   | XSS vulnerabilities, exposed secrets, unchecked external input, data mutation bugs, missing network error handling.          | Real bugs, security risks, production incidents                     |
-| **Important**  | Semantic naming mismatches, SOLID/SRP violations, missing tests on complex logic, accessibility failures (WCAG).             | Significant maintainability, testability, or a11y impact            |
-| **Suggestion** | Modern syntax refactoring, design pattern improvements, dependency injection opportunities.                                  | Better way exists, but current is acceptable                        |
-| **Minor**      | Unused imports, trailing whitespace, console logs (if CI doesn't catch them). One line per item. See references for details. | Cosmetic; tools should catch; skip when linter/formatter runs in CI |
+| Level                  | Examples                                                                                                                                | Why This Level                                                      |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| **Blocking**           | XSS vulnerabilities, exposed secrets, unchecked external input, data mutation bugs, missing network error handling.                     | Real bugs, security risks, production incidents                     |
+| **Important**          | Semantic naming mismatches, SOLID/SRP violations, missing tests on complex logic, accessibility failures (WCAG).                        | Significant maintainability, testability, or a11y impact            |
+| **Suggestion**         | Modern syntax refactoring, design pattern improvements, dependency injection opportunities.                                             | Better way exists, but current is acceptable                        |
+| **Minor**              | Unused imports, trailing whitespace, console logs (if CI doesn't catch them). One line per item. See references for details.            | Cosmetic; tools should catch; skip when linter/formatter runs in CI |
+| **Attention Required** | Layout/UI changes that are purely visual, domain-dependent business logic, undocumented expected behaviour, possible visual regression. | Requires human judgment or manual/product verification              |
 
 **Golden rule**: if the project has a linter/formatter configured and a CI pipeline, trust the tooling for formatting and style. Focus human review time on what tools cannot catch.
 
@@ -64,7 +66,7 @@ When asked to review a MR/PR:
 5. Fetch **full** diffs via MCP (all pages if paginated); build inventory of changed files (added / modified / deleted)
 6. Fetch pipeline/CI status
 7. Load relevant references based on changed file types (see Reference loading). Frontend and CI only — backend files are out of scope.
-8. Apply the review checklist (Blocking → Important → Suggestion → Minor), using contextual analysis and duplication detection
+8. Apply the review checklist (Blocking → Important → Suggestion → Attention Required → Minor), using contextual analysis and duplication detection
 9. Format findings using the output template (Phase 1 — report in chat)
 10. Ask which findings to post (Phase 2), then post selected ones with AI mention (Phase 3)
 
@@ -158,7 +160,7 @@ Check if the project has its own coding rules or conventions:
 - **Cursor skills**: search for `.cursor/skills/` in the project
 - **Documentation**: check for `CONTRIBUTING.md`, `CODING_STANDARDS.md`, or similar
 
-These project-specific rules take precedence over the generic references in this skill.
+These project-specific rules take precedence over the generic references in this skill. **In case of conflict between a local project rule (e.g., `.cursor/rules/*`, `.github/copilot-instructions.md`, `.claude/rules/*`, `CLAUDE.md`, or any internal standard) and a generic skill reference, the local rule MUST completely override the generic one.**
 
 ### Coding style detection
 
@@ -255,8 +257,9 @@ Review Progress:
 - [ ] 3. Code analysis (contextual analysis + duplication detection)
 - [ ] 4. Blocking (bugs, security, data loss)
 - [ ] 5. Important (architecture, a11y, semantic naming, missing tests, edge cases, perf)
-- [ ] 6. Minor (non-blocking minor items)
-- [ ] 7. Highlights & verdict
+- [ ] 6. Attention Required (human review — complex visual, nuanced logic, ambiguous specs)
+- [ ] 7. Minor (non-blocking minor items)
+- [ ] 8. Highlights & verdict
 ```
 
 ### 1. MR/PR metadata (adapted)
@@ -353,7 +356,7 @@ Group these in a dedicated **Minor** section. One line per item. **Skip style it
 
 ## Language
 
-Review feedback is in **English by default**. If the user requests another language (e.g. "in French", "en français"), write the feedback in that language.
+Review feedback is in **English by default**. If the user specifies another language, write the feedback in that language.
 
 ## Output Template
 
@@ -365,6 +368,10 @@ Review feedback is in **English by default**. If the user requests another langu
 
 > [1-2 sentences: summary and overall impression]
 
+### Attention Required (Human Review)
+
+- [Point requiring human verification]. _Human review: [what to check]._
+
 ### Findings
 
 #### `[filename]`
@@ -372,6 +379,7 @@ Review feedback is in **English by default**. If the user requests another langu
 - **Blocking** — [Short description. Consequence if not fixed.]
 - **Important** — [Short description. Why it matters. Consequence.]
 - **Suggestion** — [Short description.] _(personal opinion)_
+- **Attention Required** — [Short description.] _Human review: [what to check]._
 
 ### Minor
 
@@ -384,9 +392,9 @@ Review feedback is in **English by default**. If the user requests another langu
 - **Focused on the code, not the person** — critique the code, not the developer
 - **Educational, not judgmental** — avoid "Why didn't you use X?"; use "Have you considered…?" instead
 - **Consequence required** (Blocking and Important only): each Blocking or Important finding must include the concrete consequence in one sentence
-- **Prioritized**: clearly distinguish Blocking vs Important vs Suggestion vs Minor
+- **Prioritized**: clearly distinguish Blocking vs Important vs Suggestion vs Attention Required vs Minor
 - **Consolidate**: group similar issues (e.g. "5 functions missing error handling" not 5 separate findings)
-- **Short and direct**: 1-2 sentences per finding max
+- **Concision (mandatory)**: Maximum 2 short sentences per finding. Max 15–20 words per sentence. Do not explain basic programming concepts; state the issue and the direct consequence only.
 - **Verdict first**: the developer must know immediately if they need to act
 - **Group by file**: easier to navigate than by severity
 - **Minor section**: non-blocking items (log, newline, imports, etc.) go in the Minor section, one line per item — not in per-file findings
@@ -405,27 +413,28 @@ Workflow: report in chat (Phase 1) → ask user which findings to post (Phase 2)
 
 When posting comments on the MR/PR:
 
-1. Prefer general/overview notes (`create_workitem_note` or equivalent) over fragile inline thread replies — post feedback at the file level or as a comment on the MR/PR overview when code suggestions are involved.
-2. Always be constructive — suggest fixes, don't just point out problems
-3. Provide code corrections in standard markdown blocks (see Writing rules); avoid line-targeted suggestion blocks that break across platforms
-4. Keep a respectful and collaborative tone
-5. **Do not create a thread/note on pipeline status** — status stays in the report header only
-6. **AI disclosure (mandatory)** — append to each posted comment: `---` then `*AI-assisted review (skill frontend-code-review)*` (or `*Review assistée par skill frontend-code-review*` in French if user requested French)
+1. **Phase 3 concision**: Comments posted on the MR/PR must follow the same concision rule — max 2 short sentences, 15–20 words per sentence, never more than 2 lines per comment; issue + direct consequence only.
+2. Prefer general/overview notes (`create_workitem_note` or equivalent) over fragile inline thread replies — post feedback at the file level or as a comment on the MR/PR overview when code suggestions are involved.
+3. Always be constructive — suggest fixes, don't just point out problems
+4. Provide code corrections in standard markdown blocks (see Writing rules); avoid line-targeted suggestion blocks that break across platforms
+5. Keep a respectful and collaborative tone
+6. **Do not create a thread/note on pipeline status** — status stays in the report header only
+7. **AI disclosure (mandatory)** — append to each posted comment: `---` then `*AI-assisted review (skill frontend-code-review)*`
 
 ## Resources
 
 See **Reference loading** above for when to load each file.
 
-| File                          | Purpose                                                                              |
-| ----------------------------- | ------------------------------------------------------------------------------------ |
-| `references/js-ts.md`         | JS/TS conventions, semantic naming, testability, DOM, events, class patterns         |
-| `references/html.md`          | Semantics, script loading, W3C syntax                                                |
-| `references/css.md`           | Detect convention from files, enforce consistency                                    |
-| `references/templates.md`     | Server-side template conventions (Twig, Blade, Nunjucks, Liquid), includes, defaults |
-| `references/accessibility.md` | SVG a11y, focus management, ARIA, semantic HTML                                      |
-| `references/security.md`      | XSS, third-party scripts, secrets, runtime risks                                     |
-| `references/code-quality.md`  | Error handling, performance, boundary conditions, SOLID principles                   |
-| `references/testing.md`       | Test structure and conventions (framework-agnostic)                                  |
-| `references/architecture.md`  | Directory layout, package.json, CHANGELOG                                            |
-| `references/ci-cd.md`         | Pipeline, GitHub Actions, GitLab CI                                                  |
-| `references/assets.md`        | Image format, size, SVG optimization, sprites                                        |
+| File                          | Purpose                                                                                          |
+| ----------------------------- | ------------------------------------------------------------------------------------------------ |
+| `references/js-ts.md`         | JS/TS conventions, semantic naming, testability, DOM, events, class patterns                     |
+| `references/html.md`          | Semantics, script loading, W3C syntax                                                            |
+| `references/css.md`           | Detect convention from files, enforce consistency                                                |
+| `references/templates.md`     | Server-side template conventions (Twig, Blade, Nunjucks, Liquid), includes, defaults             |
+| `references/accessibility.md` | SVG a11y, focus management, ARIA, semantic HTML                                                  |
+| `references/security.md`      | XSS, third-party scripts, secrets, runtime risks                                                 |
+| `references/code-quality.md`  | Error handling, performance, boundary conditions, SOLID principles                               |
+| `references/testing.md`       | Test structure and conventions (framework-agnostic)                                              |
+| `references/architecture.md`  | Project structure & tooling, architecture principles (SOLID, SRP, DIP), SoC, coupling, data flow |
+| `references/ci-cd.md`         | Pipeline, GitHub Actions, GitLab CI                                                              |
+| `references/assets.md`        | Image format, size, SVG optimization, sprites                                                    |

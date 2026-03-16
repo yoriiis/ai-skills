@@ -18,40 +18,7 @@ Checklist for code quality review: error handling, front-end performance, bounda
 - **Exemptions**: Declarative code is exempt from this strict limit: HTML templates, JSX/TSX in React, Vue templates, and large static configuration objects
 - Multiple nesting levels (3+) indicate a candidate for early returns or extraction
 
-> **SOLID Principle**: Single Responsibility Principle (SRP) — a function should do only what its name indicates. If you need "and" to describe what a function does, split it.
-
----
-
-## Architecture Principles
-
-### Context Window Amnesia (AI-generated code)
-
-- AI often produces **local** fixes that pass review but break the **global** architecture (wrong module, duplicated logic, bypassed layers). When reviewing AI-generated or AI-assisted changes, ask: "Does this fit the existing architecture? Is logic duplicated elsewhere? Are layers/abstractions respected?"
-
-### Single Responsibility Principle (SRP)
-
-- A function should do only what its name indicates
-- If you need "and" to describe it, split it
-- See `references/js-ts.md` for JS/TS detection patterns
-
-### Dependency Inversion Principle (DIP)
-
-- Depend on abstractions, not concrete implementations
-- Do not instantiate heavy dependencies (API clients, Logger) inside functions — pass them as parameters or via constructor to enable mocking in tests
-- Inject dependencies via constructor/parameters
-- See `references/js-ts.md` for JS/TS patterns
-
-### Testability by Design
-
-- Even when no tests exist, code must be written **as if it will be tested**: pure functions when possible, clear inputs/outputs, no hidden coupling
-- Prefer explicit dependencies over implicit ones
-
-### Design Patterns to Recognize (Flag as Suggestion)
-
-- Tight coupling between components
-- God objects/classes that know too much
-- Deep inheritance hierarchies (prefer composition)
-- Feature envy
+> **SRP**: See `references/architecture.md` — a function should do only what its name indicates. If you need "and" to describe what it does, split it.
 
 ---
 
