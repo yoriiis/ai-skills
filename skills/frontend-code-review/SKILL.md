@@ -47,6 +47,10 @@ If the answer to all four is "no", it's noise. Don't report it as a primary find
 3. Evaluate if tests genuinely validate the intent
 4. Finally, review implementation details
 
+### Context Window Amnesia (AI-generated code)
+
+AI often produces **local** fixes that pass review but break the **global** architecture (wrong module, duplicated logic, bypassed layers). When reviewing AI-generated or AI-assisted changes, ask: "Does this fit the existing architecture? Is logic duplicated elsewhere? Are layers/abstractions respected?"
+
 Always the same flow — no mode to detect:
 
 1. **Phase 1 (obligatory)** — Analyze + report in chat
@@ -215,7 +219,7 @@ Load references **after** diffs are fetched, using the paths in the tables below
 | `*.css`, `*.scss`, `*.less`                                      | `references/css.md`                                                              |
 | `*.html`                                                         | `references/html.md` + `references/accessibility.md`                             |
 | `*.twig`, `*.blade.php`, `*.liquid`, `*.njk`                     | `references/templates.md` + `references/html.md` + `references/accessibility.md` |
-| `*.vue`, `*.svelte`                                              | `references/accessibility.md`                                                    |
+| `*.vue`, `*.svelte`                                              | `references/js-ts.md` + `references/html.md` + `references/css.md` + `references/accessibility.md` |
 | `*.png`, `*.jpg`, `*.jpeg`, `*.gif`, `*.webp`, `*.avif`, `*.svg` | `references/assets.md`                                                           |
 
 **By changed content**:

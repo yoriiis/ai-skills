@@ -41,14 +41,7 @@ Only apply if the project has a `tsconfig.json`. If the project is in plain JS, 
 
 ## DOM & Events
 
-- Cache selectors if used more than once (as a constant or class property)
-- DOM injection must be done outside of loops (batch with DocumentFragment)
 - Use data attributes for JavaScript hooks: `[data-bookmark-button]`, `element.getAttribute('data-bookmark-id')`
-- Prefer event delegation over individual listeners on repeated elements
-
-### Security (Detection Patterns)
-
-Flag as **Blocking** when user or dynamic input is used with: `innerHTML`, `insertAdjacentHTML`, `outerHTML`, `document.write`. Theoretical justification and sanitization strategy → [security.md](security.md)
 
 ## Modern Syntax (ES6+)
 
@@ -57,8 +50,6 @@ Prefer modern ES6+ constructs when they improve readability or safety. Flag as *
 - **Optional chaining** (`?.`) — avoid long chains of `&&` for nested property access
 - **Nullish coalescing** (`??`) — use instead of `||` when `0`, `""`, `false` are valid values
 - **Destructuring** — for function parameters, return values, and variable declaration
-
-> **Performance**: Front-end performance rules (loops, DOM manipulation, memoization, layout thrashing) are in `references/code-quality.md`. Load it when reviewing JS/TS for performance-related checks.
 
 ## Structured Units (Modules, Hooks, Classes)
 
@@ -158,8 +149,6 @@ Any function that returns a value must use a prefix indicating the return type. 
 **Flag as Suggestion:**
 
 - `getUser()` returns `{ user, metadata }` instead of just `user`
-
-> **Error handling**: Strategy, logic, syntax, and anti-patterns (swallowed exceptions, fallback UI, try/catch vs .catch) are defined in `references/code-quality.md` — use it as the single source of truth.
 
 ## JSDoc
 

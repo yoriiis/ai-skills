@@ -6,15 +6,13 @@ Reference standards for HTML review. Only enforce rules that match the target pr
 
 ## Semantics
 
-This section covers W3C structure and syntax (element hierarchy, lists, semantic elements). For heading hierarchy that impacts screen readers (`h1` → `h3` skip) → see `references/accessibility.md`.
+This section covers W3C structure and syntax (element hierarchy, lists, semantic elements).
 
 - Respect HTML element hierarchy (`ul > li`, not `ul > div`)
 - Use `<ul>` / `<ol>` for lists
 - Use heading tags (`h1`–`h6`) for titles, respecting hierarchy
 - Use `<strong>` and `<em>` instead of `<b>` and `<i>` (semantic meaning over visual styling)
 - Use semantic elements (`<header>`, `<nav>`, `<main>`, `<article>`, `<section>`, `<footer>`) over generic `<div>` when appropriate
-
-For `<img>` alt attributes, `<a>` vs `<button>`, and other interactive element rules → see `references/accessibility.md`.
 
 ## Script Loading
 

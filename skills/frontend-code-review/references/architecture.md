@@ -6,10 +6,6 @@ Reference standards for project organization, package management, and front-end 
 
 ## Architecture Principles
 
-### Context Window Amnesia (AI-generated code)
-
-- AI often produces **local** fixes that pass review but break the **global** architecture (wrong module, duplicated logic, bypassed layers). When reviewing AI-generated or AI-assisted changes, ask: "Does this fit the existing architecture? Is logic duplicated elsewhere? Are layers/abstractions respected?"
-
 ### Single Responsibility Principle (SRP)
 
 - A function should do only what its name indicates
@@ -57,6 +53,7 @@ Reference standards for project organization, package management, and front-end 
 ## Data Flow / Data Model
 
 - Ensure predictable data flow and a clear data model. Prefer a single source of truth where relevant; avoid inconsistent duplication between UI and the underlying data model. (Use "data flow" or "data model" rather than framework-specific terms.)
+- **State Immutability**: Never mutate state, arrays, or objects directly. Prefer pure functions, copying (spread operator), or project-specific state management paradigms.
 
 ---
 

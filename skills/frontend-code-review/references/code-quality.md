@@ -18,11 +18,13 @@ Checklist for code quality review: error handling, front-end performance, bounda
 - **Exemptions**: Declarative code is exempt from this strict limit: HTML templates, JSX/TSX in React, Vue templates, and large static configuration objects
 - Multiple nesting levels (3+) indicate a candidate for early returns or extraction
 
-> **SRP**: See `references/architecture.md` — a function should do only what its name indicates. If you need "and" to describe what it does, split it.
-
 ---
 
 ## Readability
+
+### Magic Values
+
+- Avoid magic numbers or unexplained hardcoded strings. Extract them into descriptively named variables or constants. The variable name should explain the intent, rendering inline comments unnecessary.
 
 ### Naming in loops
 

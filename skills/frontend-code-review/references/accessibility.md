@@ -25,6 +25,7 @@ Reference standards for accessibility review.
 - **Forms & Inputs**: Every form field must have a programmatically associated `<label>`. If a visual label is impossible, use `aria-label` or `aria-labelledby`
 - **Color Contrast**: Ensure text and interactive elements meet WCAG AA standards (4.5:1 for normal text). Do not rely on color alone to convey information
 - Click/touch targets: minimum 44×44px (WCAG 2.1 AAA, Apple HIG)
+- Custom interactive elements (e.g., adding onClick to a `<div>` or `<span>`) MUST include `tabindex="0"` to be focusable AND a keyboard event listener (e.g., onKeyDown for Enter/Space keys) to be accessible.
 
 ## Images
 
