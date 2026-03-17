@@ -5,7 +5,7 @@ topic: Development
 description: Review MR/PR with a senior front-end engineering methodology. Use when asked to review a MR/PR on GitHub or GitLab. Produces high-value feedback focused on bugs, security, performance, accessibility, and knowledge sharing.
 ---
 
-# Review MR/PR
+## Review MR/PR
 
 Review agent that replicates a senior front-end architect's code review methodology. Works with GitHub Pull Requests and GitLab Merge Requests.
 
