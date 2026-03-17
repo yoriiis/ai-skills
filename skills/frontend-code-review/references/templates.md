@@ -10,19 +10,21 @@ Reference standards for server-side HTML template review. Generic rules applicab
 - Oversized or multi-responsibility templates/components — flag and suggest splitting. [Important]
 - Changes that do not belong in the current component's scope. [Important]
 
-## Twig: include & isolation
+## Twig
+
+### Include & isolation
 
 - Using `{% include %}` tag instead of `include()` function in Twig. [Suggestion]
 - Twig `include()` without `false` as third argument (variable leakage into included template). [Important]
 
-## Twig: variable defaults
+### Variable defaults
 
 - Variable defaults not defined at the top of the template, before any HTML. [Suggestion]
 - Using `|default()` for booleans — use `??` (null coalescing); `|default()` treats `false`, `0`, `""`, `null` as empty. [Important]
 - Using `|default('')` for non-string fallbacks. [Suggestion]
 - Unnecessary ternary with empty string fallback (e.g. `isActive ? 'isActive' : ''`) — Twig handles falsy natively. [Minor]
 
-## Twig: security (XSS)
+### Security (XSS)
 
 - User-controlled or dynamic data rendered without contextual escaping (`|e('html')`, `|e('html_attr')`, `|e('js')`); `|raw` only when explicitly trusted and sanitized. [Blocking]
 
