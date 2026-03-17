@@ -28,7 +28,7 @@ Reference standards for image and SVG asset optimization.
 - Critical fonts above the fold without `<link rel="preload">` when relevant. [Suggestion]
 - Blocking fonts on immediately visible text without `font-display`. [Important]
 
-### Critical Verification Checkpoints
+### Critical verification checkpoints
 
 - Could this image be served in a more efficient format (WebP/AVIF)?
 - Has this SVG been run through SVGO?

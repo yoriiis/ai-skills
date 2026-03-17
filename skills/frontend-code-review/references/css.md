@@ -4,7 +4,7 @@ Reference standards for CSS review. Do not impose any CSS style; new or modified
 
 ---
 
-## Detection & Convention Matching
+## Detection & convention matching
 
 - Diff CSS changes not matching project convention (BEM, utility-first, custom). [Important]
 - Notation or naming not matching existing CSS (e.g. BEM `block__element--modifier`). [Important]
@@ -22,7 +22,7 @@ Reference standards for CSS review. Do not impose any CSS style; new or modified
 - Font-weight using `normal`/`bold` instead of numeric values (`400`, `700`). [Minor]
 - Components not 100% width or not adapting to parent container. [Suggestion]
 
-## Rendering Performance
+## Rendering performance
 
 - JavaScript used for simple animations when CSS (transitions, keyframes) would suffice. [Suggestion]
 - Complex animations that stutter without `will-change` or `translateZ(0)` for compositing. [Suggestion]
@@ -30,11 +30,11 @@ Reference standards for CSS review. Do not impose any CSS style; new or modified
 - Animated properties triggering reflow (`top`/`left`, `width`/`height`) on hot paths — prefer `transform` and `opacity`. [Important]
 - Reflow-causing properties animated outside hot paths. [Suggestion]
 
-## File Organization
+## File organization
 
 - File organization not matching project structure (detect from existing CSS and components). [Suggestion]
 
-### Critical Verification Checkpoints
+### Critical verification checkpoints
 
 - Does this CSS match the project's existing naming and structure?
 - Is specificity or cascade fixable instead of using !important?

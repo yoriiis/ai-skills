@@ -28,7 +28,7 @@ Reference standards for pipeline/workflow configuration (GitLab CI, GitHub Actio
 - GitHub: invalid or insecure `actions/checkout`, `actions/cache` usage. [Important]
 - GitHub: job dependency not via `needs:`. [Suggestion]
 
-### Critical Verification Checkpoints
+### Critical verification checkpoints
 
 - Are all secrets and URLs externalized to platform variables?
 - Do jobs run on the correct branches and events?

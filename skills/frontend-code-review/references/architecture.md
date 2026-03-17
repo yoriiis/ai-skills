@@ -19,12 +19,12 @@ Reference standards for project organization, package management, and front-end 
 - Code written as if it will be tested: pure functions when possible, clear inputs/outputs, no hidden coupling. [Suggestion]
 - Prefer explicit dependencies over implicit ones. [Suggestion]
 
-## Component Complexity
+## Component complexity
 
 - Oversized or multi-responsibility templates/components — flag and suggest splitting. [Important]
 - Changes that seem out of scope for the component's primary responsibility. [Important]
 
-## Design Patterns
+## Design patterns
 
 - Tight coupling between components. [Suggestion]
 - God objects/classes that know too much. [Suggestion]
@@ -39,25 +39,25 @@ Reference standards for project organization, package management, and front-end 
 
 - Avoid strong coupling between distinct modules; prefer clear boundaries and high cohesion. [Suggestion]
 
-## Data Flow / Data Model
+## Data flow / data model
 
 - Ensure predictable data flow and a clear data model; prefer single source of truth. [Important]
 
-## Project Structure & Tooling
+## Project structure & tooling
 
 - Coverage directory committed to git. [Blocking]
-- `.nvmrc`: use named versions (e.g. `lts/hydrogen`, `lts/iron`). [Suggestion]
+- Project does not expose or document the Node/npm version to use (e.g. `.nvmrc`, `.node-version`, `engines` in `package.json`, `README` or `CONTRIBUTING`). [Suggestion]
 - Dependency version format inconsistent with project convention — check existing `package.json`. [Important]
 - For libraries: check `"exports"` and `"files"` fields if the package is published. [Suggestion]
 
-## Dependency Management
+## Dependency management
 
 - Dependencies changed in manifest without lockfile update in the same MR. [Blocking]
 - `package.json` changed (dependencies/devDependencies) without `package-lock.json` (or yarn/pnpm lock). [Blocking]
 - `composer.json` require/require-dev changed without `composer.lock`. [Blocking]
 - Requiring lockfile update when manifest change does not affect dependency tree. [Minor]
 
-### Critical Verification Checkpoints
+### Critical verification checkpoints
 
 - Does this function do only what its name indicates?
 - Are heavy dependencies injected rather than instantiated inside the function?

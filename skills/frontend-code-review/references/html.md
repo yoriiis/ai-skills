@@ -17,7 +17,7 @@ Reference standards for HTML review. Only enforce rules that match the target pr
 - Heading hierarchy skips break screen reader navigation (`h1` → `h3` without `h2`). [Important]
 - Non-semantic interactive elements (`<div onclick>`) are invisible to assistive technologies — use `<button>` or `<a>`. [Important]
 
-## Script Loading
+## Script loading
 
 - Application scripts in `<head>` must use `defer`. No `async` for app scripts. [Important]
 - Scripts in `<head>` without `defer` block rendering. [Important]
@@ -33,7 +33,7 @@ Reference standards for HTML review. Only enforce rules that match the target pr
 - No self-closing tags on void elements in HTML5: `<meta>` not `<meta />`, `<br>` not `<br />`. [Minor]
 - W3C valid markup: structure should pass W3C validator without errors. [Important]
 
-### Critical Verification Checkpoints
+### Critical verification checkpoints
 
 - Is element hierarchy correct (e.g. ul > li)?
 - Is heading hierarchy continuous (no skip)?

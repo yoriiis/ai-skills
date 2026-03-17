@@ -4,7 +4,7 @@ Checklist for security review, adapted for front-end web projects. Focus on clie
 
 ---
 
-## Input/Output Safety
+## Input/output safety
 
 - Unsafe HTML injection (`innerHTML`, `insertAdjacentHTML`) without prior sanitization. [Blocking]
 - User HTML rendered without a sanitizer (DOMPurify, etc.) with strict allowlist — prefer `textContent` or escaping. [Blocking]
@@ -12,7 +12,7 @@ Checklist for security review, adapted for front-end web projects. Focus on clie
 - Unsafe object merging (`Object.assign`, spread) with user-controlled data (prototype pollution). [Blocking]
 - User input in `href`, `src`, `action` attributes without validation (javascript: protocol, data: URIs). [Blocking]
 
-## Third-Party Scripts
+## Third-party scripts
 
 - Scripts from ad networks, analytics, or vendors loaded without `integrity` attribute (SRI). [Important]
 - Missing `crossorigin` attribute on cross-origin scripts. [Important]
@@ -27,7 +27,7 @@ Checklist for security review, adapted for front-end web projects. Focus on clie
 - Excessive logging of user data (PII in `console.log`). [Blocking]
 - Hardcoded environment-specific values (localhost URLs, staging API endpoints, test tokens). [Important]
 
-## Supply Chain & Dependencies
+## Supply chain & dependencies
 
 - New package added without verifying it exists (npm registry, spelling, official name) and health (popularity, maintenance, vulnerabilities, bundle size). [Important]
 - Dependency version format inconsistent with project convention. [Suggestion]
@@ -36,13 +36,13 @@ Checklist for security review, adapted for front-end web projects. Focus on clie
 - CI reports vulnerabilities (npm audit or equivalent failed) — flag and do not merge. [Blocking]
 - Outdated dependencies with known CVEs when surfaced by CI or manual audit. [Important]
 
-## CORS & Headers
+## CORS & headers
 
 - Overly permissive CORS (`Access-Control-Allow-Origin: *` with credentials). [Important]
 - Missing security headers on served pages (CSP, X-Frame-Options, X-Content-Type-Options). [Important]
 - `target="_blank"` links without `rel="noopener noreferrer"`. [Important]
 
-## Runtime Risks
+## Runtime risks
 
 - Unbounded loops or recursive calls that can freeze the browser tab. [Blocking]
 - Missing timeouts on `fetch` / `XMLHttpRequest` calls. [Important]
@@ -51,14 +51,14 @@ Checklist for security review, adapted for front-end web projects. Focus on clie
 - `setInterval` without clear condition (polling that never stops). [Important]
 - ReDoS: complex regex on user input. [Important]
 
-## Async & State
+## Async & state
 
 - Race conditions: concurrent async operations modifying shared state. [Important]
 - Check-then-act patterns without atomicity (`if (exists) then use`). [Important]
 - Stale closures capturing outdated state in event handlers or timeouts. [Important]
 - Missing error handling on `fetch` / async operations (no `.catch()`, no `try/catch`). [Important]
 
-## Data Integrity
+## Data integrity
 
 - Form submissions without client-side validation. [Important]
 - File uploads without client-side validation (type, size) before submission. [Important]
@@ -66,7 +66,7 @@ Checklist for security review, adapted for front-end web projects. Focus on clie
 - Trusting client-provided data for business logic (price, role, permissions). [Blocking]
 - Missing idempotency on retry-able operations (double submit). [Important]
 
-### Critical Verification Checkpoints
+### Critical verification checkpoints
 
 - Is this content escaped before insertion into the DOM?
 - Can an attacker control any part of this URL/attribute value?

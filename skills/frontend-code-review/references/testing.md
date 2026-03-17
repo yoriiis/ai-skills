@@ -13,22 +13,22 @@ Reference standards for test review. Only enforce rules that match the target pr
 - Unit tests not isolating the function — mock outgoing/external calls (APIs, other modules, heavy dependencies). [Important]
 - Multiple behaviors or edge cases in a single test case — one `it` or `test` per variation. [Suggestion]
 
-## Shadow Mocks
+## Shadow mocks
 
 - Mocking the core logic or the system under test (SUT) itself. [Important]
 
-## Snapshot Tests
+## Snapshot tests
 
 - Snapshot tests as the only validation for business behavior or complex conditional branches. [Important]
 - Snapshots for logic (calculations, business conditions) instead of presentational components only. [Suggestion]
 
-## Test Structure
+## Test structure
 
 - Test files not in `__tests__/` directory next to the code they cover. [Suggestion]
 - Test file naming not matching project convention (e.g. `component.js` → `component.test.js`). [Suggestion]
 - Files containing logic without unit tests (not just DOM manipulation). [Important]
 
-## Test File Order
+## Test file order
 
 - Imports order: SUT first, then dependencies. [Minor]
 - Mocks not at top level (`jest.mock('...')` / `vi.mock('...')`). [Suggestion]
@@ -45,7 +45,7 @@ Reference standards for test review. Only enforce rules that match the target pr
 - CSS/SVG imports not mocked via project file-mock. [Minor]
 - HTML templates in tests inconsistent with project convention (JSX vs string). [Suggestion]
 
-### Critical Verification Checkpoints
+### Critical verification checkpoints
 
 - Does the test assert expected behavior from spec/requirements, or only what the code currently does?
 - What am I mocking — is it an external boundary (API, I/O) or the logic I claim to be testing?

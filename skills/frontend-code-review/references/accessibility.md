@@ -12,14 +12,14 @@ Reference standards for accessibility review.
 - SVG sprite parent without `aria-hidden="true"` and hidden from layout (e.g. position absolute, width 0, height 0, overflow hidden). [Important]
 - SVGs without `viewBox` (fixed `width`/`height` instead) — consider sprite optimization and SVGO. [Important]
 
-## Focus Management
+## Focus management
 
 - When opening a modal/menu: move focus to an element inside it (e.g. close button). [Important]
 - Set focus only when the target element is visible — wait for CSS transition to end before calling `.focus()`. [Important]
 - Restrict keyboard navigation inside the modal (focus trap: first ↔ last focusable element). [Important]
 - Return focus to the trigger element after closing a modal or menu. [Important]
 
-## Interactive Elements
+## Interactive elements
 
 - Use `<a>` for navigation, `<button>` for actions — never the opposite. [Important]
 - Form field without a programmatically associated `<label>` (or `aria-label` / `aria-labelledby` if visual label impossible). [Important]
@@ -31,13 +31,13 @@ Reference standards for accessibility review.
 
 - `<img>` without `alt` attribute (use empty `alt=""` for decorative images). [Important]
 
-## ARIA & Dynamic Content
+## ARIA & dynamic content
 
 - Dynamic content updates (toast, form validation, loading) without `aria-live="polite"` or `aria-live="assertive"` for critical alerts. [Important]
 - Containers that update dynamically without `role="alert"` or `role="status"`. [Important]
 - Hidden content toggled by JS without `aria-expanded` updated on the trigger element. [Important]
 
-### Critical Verification Checkpoints
+### Critical verification checkpoints
 
 - Is focus moved into the modal on open and returned to the trigger on close?
 - Are all interactive elements keyboard-accessible and correctly labeled?

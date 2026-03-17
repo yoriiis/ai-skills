@@ -4,12 +4,12 @@ Reference standards for JS/TS review. Only enforce rules that match the target p
 
 ---
 
-## Module Format
+## Module format
 
 - New files not using the project's module format (ESM or CJS) — check `package.json` and existing imports. [Important]
 - Mixing `require` and `import` in the same project. [Important]
 
-## TypeScript Rules
+## TypeScript rules
 
 - Use `interface` for types without inheritance; prefer `type` for declarations. [Suggestion]
 - Types declared in a separate location when only used in one function — declare where used. [Suggestion]
@@ -20,7 +20,7 @@ Reference standards for JS/TS review. Only enforce rules that match the target p
 - Use of `any` — use `unknown` + narrowing or proper generics. [Important]
 - Packages without declaration files not declared in `modules.d.ts`. [Suggestion]
 
-## Code Hygiene
+## Code hygiene
 
 - `console.log` / `console.info` / `console.debug` containing PII or secrets. [Blocking]
 - `console.log` / `console.info` / `console.debug` (no PII) when linter does not catch them. [Minor]
@@ -43,13 +43,13 @@ Reference standards for JS/TS review. Only enforce rules that match the target p
 
 - JavaScript hooks not using data attributes (e.g. `[data-bookmark-button]`, `getAttribute('data-bookmark-id')`). [Suggestion]
 
-## Modern Syntax (ES6+)
+## Modern syntax (ES6+)
 
 - Long chains of `&&` for nested property access instead of optional chaining (`?.`). [Suggestion]
 - Using `||` when `0`, `""`, `false` are valid values instead of nullish coalescing (`??`). [Suggestion]
 - Missing destructuring for function parameters, return values, or variable declaration when it improves readability. [Suggestion]
 
-## Structured Units (Modules, Hooks, Classes)
+## Structured units (modules, hooks, classes)
 
 - Class structure not following project convention: constructor → init → addEvents → handlers → utilities. [Suggestion]
 - Event handlers needing `this` context not bound in constructor. [Important]
@@ -59,12 +59,12 @@ Reference standards for JS/TS review. Only enforce rules that match the target p
 - Use `className` (not `class`) for CSS classes in JSX. [Important]
 - jsx-dom: dependency (SVG, CSS, JS) not explicitly imported in the component that uses it. [Important]
 
-## Naming Conventions
+## Naming conventions
 
 - Non-descriptive names (`data`, `item`, `x`, `handle()`, `process()`). [Important]
 - Generic class names (`Manager`, `Helper`, `Service`). [Important]
 
-## Semantic Function Naming
+## Semantic function naming
 
 - Function prefix/return type mismatch (e.g. `isXxx` / `hasXxx` returning non-boolean). [Important]
 - `getXxx()` / `fetchXxx()` with no return statement or explicitly returns `undefined`/`void` (outside reactive component context). [Important]
@@ -83,7 +83,7 @@ Reference standards for JS/TS review. Only enforce rules that match the target p
 - In JS: JSDoc missing `@param`, `@returns`, `@async` tags with types. [Suggestion]
 - In TS: JSDoc duplicating type annotations — keep description only, omit `@param {string}`. [Minor]
 
-### Critical Verification Checkpoints
+### Critical verification checkpoints
 
 - Does the function name match its return type and side effects?
 - Is state mutated directly instead of via copy or pure functions?

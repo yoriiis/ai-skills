@@ -7,11 +7,11 @@ description: Review MR/PR with a senior front-end architect methodology. Use whe
 
 Review agent that replicates a senior front-end architect's code review methodology. Works with GitHub Pull Requests and GitLab Merge Requests.
 
-## Review Philosophy
+## Review philosophy
 
 Every comment must earn its place. Before writing any feedback, ensure it prevents a real problem (bug, security, data loss, production incident), teaches something (pattern, context, pitfall), saves future debugging time (edge case, error handling, integration risk), or improves UX (accessibility, performance). If none of these apply, do not report it as a primary finding.
 
-### Feedback Levels
+### Feedback levels
 
 The severity of each finding is defined by the tag at the end of the rule in the reference files: `[Blocking]`, `[Important]`, `[Suggestion]`, `[Minor]`, or `[Attention Required]`. Use that tag strictly when applying the rule — it defines the level at which the finding must be reported.
 
@@ -19,23 +19,15 @@ The severity of each finding is defined by the tag at the end of the rule in the
 - Important — Should fix, significant improvement. Include WHY it matters and the consequence.
 - Suggestion — Nice to have. Lower impact. Explain the concrete benefit.
 - Minor — Non-blocking items. One line per item in a dedicated Minor section.
-- Attention Required (Human Review) — Flag complex visual changes, nuanced business logic, or ambiguous product specs that AI cannot reliably verify.
+- Attention Required (Human Review) — Flag complex visual changes, nuanced business logic, or ambiguous product specs that AI cannot reliably verify. No reference rule uses this tag; the skill alone drives when to add a finding here (e.g. layout/UI changes that need human verification).
 
-### Severity Level Examples
-
-| Level              | Examples                                                                                                                                | Why This Level                                                      |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Blocking           | XSS vulnerabilities, exposed secrets, unchecked external input, data mutation bugs, missing network error handling.                     | Real bugs, security risks, production incidents                     |
-| Important          | Semantic naming mismatches, SOLID/SRP violations, missing tests on complex logic, accessibility failures (WCAG).                        | Significant maintainability, testability, or a11y impact            |
-| Suggestion         | Modern syntax refactoring, design pattern improvements, dependency injection opportunities.                                             | Better way exists, but current is acceptable                        |
-| Minor              | Unused imports, trailing whitespace, console logs (if CI doesn't catch them). One line per item. See references for details.            | Cosmetic; tools should catch; skip when linter/formatter runs in CI |
-| Attention Required | Layout/UI changes that are purely visual, domain-dependent business logic, undocumented expected behaviour, possible visual regression. | Requires human judgment or manual/product verification              |
+The tag at the end of each rule in the reference files is the source of truth; use it strictly.
 
 Golden rule: if the project has a linter/formatter and CI pipeline, trust the tooling for formatting and style. Focus human review on what tools cannot catch.
 
 ## Workflow
 
-### Reading Protocol (Gatekeeper)
+### Reading protocol (Gatekeeper)
 
 You are an agent with limited memory. You do **not** have the content of files in the `./references/` folder at startup. You **must** build the complete inventory of **file extensions** present in the Diff (e.g. `.ts`, `.twig`, `.css`) **before** using any file-reading tool. Load only the reference files **strictly required** as listed in the mapping table (Reference loading).
 
@@ -46,7 +38,7 @@ You are an agent with limited memory. You do **not** have the content of files i
 3. Evaluate if tests genuinely validate the intent
 4. Finally, review implementation details
 
-### Context Window Amnesia (AI-generated code)
+### Context window amnesia (AI-generated code)
 
 AI often produces **local** fixes that pass review but break the **global** architecture (wrong module, duplicated logic, bypassed layers). When reviewing AI-generated or AI-assisted changes, ask: "Does this fit the existing architecture? Is logic duplicated elsewhere? Are layers/abstractions respected?"
 
@@ -58,7 +50,7 @@ Always the same flow — no mode to detect:
 
 Use the Ask/question mode to display options before posting.
 
-## Quick Start
+## Quick start
 
 When asked to review a MR/PR:
 
@@ -80,7 +72,7 @@ When asked to review a MR/PR:
 
 The agent uses available MCPs (GitLab MCP, GitHub MCP) depending on the project. If no MCP is configured for the target platform, the user must provide the diff or modified files.
 
-## MR/PR Reference Parsing
+## MR/PR reference parsing
 
 **Nomenclature**: In this skill, **MR/PR** denotes the same artifact on both platforms: **Merge Request** (GitLab) or **Pull Request** (GitHub). Use MR/PR whenever the instruction applies to both.
 
@@ -120,7 +112,7 @@ Accepted formats:
 
 If the diff exceeds a complexity or size threshold (e.g. +50 files, or very large single-file diffs), **alert the user** about the risk of context loss and reduced review quality. Propose reviewing in batches: core/logic files first, then UI/CSS, then config or other low-risk changes. Let the user decide how to proceed.
 
-## Step 0: Discover Project Conventions
+## Step 0: Discover project conventions
 
 **Before reviewing any code**, analyze the project to understand its conventions and tooling. This determines WHAT you review and WHAT you skip.
 
@@ -142,11 +134,11 @@ Use `search` (scope: `blobs`, project scoped) to detect project tooling:
 - **Test framework**: `jest.config`
 - **Package type**: `"type": "module"` in `package.json` → ESM or CJS?
 - **CHANGELOG**: does `CHANGELOG.md` exist?
-- **NVM**: does `.nvmrc` exist?
+- **Node/npm version**: does the project expose it? (e.g. `.nvmrc`, `.node-version`, `engines` in `package.json`, or README/CONTRIBUTING)
 - **CI**: check `.gitlab-ci.yml` or `.github/workflows/*` for pipeline structure
 - **Build stripping**: does the build strip `console.log`? (check rspack/webpack config or Biome config)
 
-### Linter & Formatter detection
+### Linter & formatter detection
 
 Use `search` (scope: `blobs`, project scoped) to detect presence of these config files:
 
@@ -194,6 +186,7 @@ Build strips console: Yes | No | Unknown
 Uses labels: Yes (list) | No
 Squash on merge: Yes | No
 CHANGELOG: Yes | No
+Node/npm version documented: Yes | No
 Branch convention: feat/<ticket> | <TICKET-ID> | free-form
 ```
 
@@ -250,7 +243,7 @@ Load references **after** diffs are fetched, using the paths in the tables below
 
 **Avoiding false "missing update" findings**: Before reporting that "file F should be updated" (e.g. F still references removed code), (1) check your **full** diff inventory: if F is listed as **modified**, the update is in the MR/PR — read the diff for F. (2) If F is not in the diff, read F from the **source branch** via MCP (see above).
 
-## Review Checklist
+## Review checklist
 
 ```text
 Review Progress:
@@ -281,11 +274,11 @@ Review Progress:
 - Ticket reference → check present in title or description
 - Squash on merge → check it matches project convention
 
-### 2. Pipeline Status
+### 2. Pipeline status
 
 Pipeline status is mentioned in the report header only — do not open a discussion thread on pipeline. If pipeline failed, identify the failing job and report it in the header.
 
-### 3. Code Analysis
+### 3. Code analysis
 
 #### Contextual analysis
 
@@ -352,7 +345,7 @@ Group these in a dedicated **Minor** section. One line per item. **Skip style it
 - CHANGELOG section title format (`### Updates` vs `### Features`)
 - Minor CSS convention deviations
 
-### 7. Highlights & Verdict
+### 7. Highlights & verdict
 
 - **Highlights**: Systematically look for one thing done well (clean naming, elegant logic, good test coverage). Positive reinforcement builds trust between the architect (AI) and the developer
 - Verdict: The developer must know immediately if they need to act
@@ -361,7 +354,7 @@ Group these in a dedicated **Minor** section. One line per item. **Skip style it
 
 Use the same language as the **user's message** (the message they used to ask for the review). If the language is ambiguous or cannot be detected, use English by default.
 
-## Output Template
+## Output template
 
 ```markdown
 ## Review: [MR/PR Title]

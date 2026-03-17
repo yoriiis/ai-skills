@@ -4,11 +4,12 @@ Checklist for code quality review: error handling, front-end performance, bounda
 
 ---
 
-## Control Flow & Function Size
+## Control flow & function size
 
 - Deeply nested `else` blocks instead of early returns. [Important]
 - Complex guard conditions not extracted into a named helper. [Suggestion]
 - Redundant `else` when the `if` branch returns. [Minor]
+- When an if/else has no early return, prefer putting the truthy branch first when possible — improves readability. [Suggestion]
 - Functions longer than ~30 lines (business/procedural logic) not extracted — declarative code (HTML templates, JSX, config objects) exempt. [Important]
 - Multiple nesting levels (3+) without early returns or extraction. [Important]
 
@@ -17,7 +18,7 @@ Checklist for code quality review: error handling, front-end performance, bounda
 - Magic numbers or unexplained hardcoded strings — extract to named variables or constants. [Suggestion]
 - Loop variables with generic names (e.g. `item`) in nested loops — use context-specific names (e.g. `article in articles`). [Suggestion]
 
-## Error Handling
+## Error handling
 
 - Error-handling pattern inconsistent with project (try/catch vs .catch()). [Important]
 - Empty catch blocks or catch with only `console.log`. [Important]
@@ -49,7 +50,7 @@ Checklist for code quality review: error handling, front-end performance, bounda
 - Pure functions called repeatedly with same inputs without memoization. [Suggestion]
 - Unnecessary re-computation on every event/render cycle. [Important]
 
-## Boundary Conditions
+## Boundary conditions
 
 - Accessing properties on potentially null DOM query results (`querySelector` can return `null`). [Important]
 - Truthy/falsy confusion: `if (value)` fails for `0`, `""`, `false` which may be valid. [Important]
@@ -67,7 +68,7 @@ Checklist for code quality review: error handling, front-end performance, bounda
 - Very long strings without length limits (layout/memory issues). [Suggestion]
 - Unicode edge cases (emoji, RTL, combining characters) not considered. [Suggestion]
 
-### Critical Verification Checkpoints
+### Critical verification checkpoints
 
 - What happens when this fetch/operation fails?
 - Will the user see a broken UI, or is there a fallback?
