@@ -2,7 +2,7 @@
 
 > **Scalable frontend quality control.** An automated review engine for GitHub and GitLab designed to tackle "Comprehension debt" in the era of high-velocity, AI-assisted development.
 
-This skill is part of the [yoriiis/ai-skills](https://github.com/yoriiis/ai-skills) collection.
+This skill is part of the [yoriiis/ai-skills](https://github.com/yoriiis/ai-skills) collection and is compatible with the [Agent Skills](https://skills.sh) ecosystem.
 
 ---
 
@@ -12,7 +12,7 @@ This skill is part of the [yoriiis/ai-skills](https://github.com/yoriiis/ai-skil
 > To add this specific skill to your local environment, run the following command:
 >
 > ```bash
-> npx skills add yoriiis/ai-skills/skills/frontend-code-review
+> npx skills add yoriiis/ai-skills --skill frontend-code-review
 > ```
 
 ---
@@ -78,7 +78,7 @@ This skill follows a structured process to keep the developer in control:
 
 ## 📚 Reference modules
 
-The engine utilizes an atomic set of standards covering the entire frontend spectrum:
+The engine utilizes an atomic set of standards sorted alphabetically for easy navigation:
 
 - **`accessibility.md`**: Focus traps, ARIA management, and SVG accessibility.
 - **`architecture.md`**: SRP/DIP principles, coupling, and separation of concerns.
@@ -96,11 +96,13 @@ The engine utilizes an atomic set of standards covering the entire frontend spec
 
 ## 📝 Usage example
 
-Simply ask your agent:
+Once installed, simply ask your agent to review a specific PR or MR:
 
 ```text
 "Review this PR: https://github.com/owner/repo/pull/123"
 ```
+
+Learn more about the open agent skills ecosystem at [skills.sh](https://skills.sh).
 
 ---
 

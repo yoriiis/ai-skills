@@ -1,6 +1,8 @@
 ---
 name: frontend-code-review
-description: Review MR/PR with a senior front-end architect methodology. Use when asked to review a MR/PR on GitHub or GitLab (public or private instances). Produces high-value feedback focused on bugs, security, architecture, accessibility, and knowledge sharing. Adapts to each project's conventions.
+title: Frontend code review
+topic: Development
+description: Review MR/PR with a senior front-end engineering methodology. Use when asked to review a MR/PR on GitHub or GitLab. Produces high-value feedback focused on bugs, security, performance, accessibility, and knowledge sharing.
 ---
 
 # Review MR/PR
