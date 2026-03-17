@@ -4,79 +4,63 @@ Reference standards for project organization, package management, and front-end 
 
 ---
 
-## Architecture Principles
+## Single Responsibility Principle (SRP)
 
-### Single Responsibility Principle (SRP)
+- Functions with side effects not explicitly indicated by their name. [Important]
+- Functions doing two or more unrelated things (validation + API call + DOM manipulation) — split them. [Important]
 
-- A function should do only what its name indicates
-- If you need "and" to describe it, split it
-- A function with side effects not indicated by its name (e.g. `getUser()` that also updates the database) violates SRP
-- A function doing two or more unrelated things (e.g. validation + API call + DOM manipulation) should be split
+## Dependency Inversion Principle (DIP)
 
-### Dependency Inversion Principle (DIP)
+- Instantiating heavy dependencies inside functions (prefer dependency injection). [Suggestion]
+- Depend on abstractions, not concrete implementations. [Suggestion]
 
-- Depend on abstractions, not concrete implementations
-- Do not instantiate heavy dependencies (API clients, Logger) inside functions — pass them as parameters or via constructor to enable mocking in tests
-- Inject dependencies via constructor/parameters
-- Hard-coded imports or instantiation inside functions make testing and substitution harder; prefer injection
+## Testability by Design
 
-### Testability by Design
+- Code written as if it will be tested: pure functions when possible, clear inputs/outputs, no hidden coupling. [Suggestion]
+- Prefer explicit dependencies over implicit ones. [Suggestion]
 
-- Even when no tests exist, code must be written **as if it will be tested**: pure functions when possible, clear inputs/outputs, no hidden coupling
-- Prefer explicit dependencies over implicit ones
+## Component Complexity
 
-### Component Complexity (framework-agnostic)
+- Oversized or multi-responsibility templates/components — flag and suggest splitting. [Important]
+- Changes that seem out of scope for the component's primary responsibility. [Important]
 
-- **Think in components.** The UI should be split into logical, reusable units regardless of the framework (React, Vue, Twig, server-side templates, etc.). If a template or component grows too large, has too many conditionals, or takes on multiple responsibilities, flag it as **Important** and suggest splitting into smaller, focused units.
-- **Scope & boundaries**: Analyze if a change belongs in the current component. Flag changes that seem "out of scope" for the component's primary responsibility.
+## Design Patterns
 
-### Design Patterns to Recognize (Flag as Suggestion)
-
-- Tight coupling between components
-- God objects/classes that know too much
-- Deep inheritance hierarchies (prefer composition)
-- Feature envy
-
----
+- Tight coupling between components. [Suggestion]
+- God objects/classes that know too much. [Suggestion]
+- Deep inheritance hierarchies (prefer composition). [Suggestion]
+- Feature envy. [Suggestion]
 
 ## Separation of Concerns (SoC)
 
-- Separate business logic and data handling from DOM manipulation or UI rendering. Keep presentation and data/domain logic in distinct layers.
-
----
+- Separate business logic and data handling from DOM manipulation or UI rendering. [Important]
 
 ## Coupling & Cohesion
 
-- Avoid strong coupling between distinct modules. Prefer clear boundaries and high cohesion within each module.
-
----
+- Avoid strong coupling between distinct modules; prefer clear boundaries and high cohesion. [Suggestion]
 
 ## Data Flow / Data Model
 
-- Ensure predictable data flow and a clear data model. Prefer a single source of truth where relevant; avoid inconsistent duplication between UI and the underlying data model. (Use "data flow" or "data model" rather than framework-specific terms.)
-- **State Immutability**: Never mutate state, arrays, or objects directly. Prefer pure functions, copying (spread operator), or project-specific state management paradigms.
-
----
+- Ensure predictable data flow and a clear data model; prefer single source of truth. [Important]
 
 ## Project Structure & Tooling
 
-### General
-
-- Coverage directory: NOT committed to git
-- `.nvmrc`: use named versions (`lts/hydrogen`, `lts/iron`)
-
-### Package.json
-
-- Dependency version format must follow the project convention — some projects pin exact versions, others use `^` or `~`. Check existing `package.json` and stay consistent
-- For libraries: check `"exports"` and `"files"` fields are properly configured if the package is published
-
----
+- Coverage directory committed to git. [Blocking]
+- `.nvmrc`: use named versions (e.g. `lts/hydrogen`, `lts/iron`). [Suggestion]
+- Dependency version format inconsistent with project convention — check existing `package.json`. [Important]
+- For libraries: check `"exports"` and `"files"` fields if the package is published. [Suggestion]
 
 ## Dependency Management
 
-When **dependencies** in a manifest are modified (added, removed, or version changed), the corresponding lockfile must be updated and committed in the same MR. Flag as **Blocking** only if dependencies changed and the lockfile is missing or not updated.
+- Dependencies changed in manifest without lockfile update in the same MR. [Blocking]
+- `package.json` changed (dependencies/devDependencies) without `package-lock.json` (or yarn/pnpm lock). [Blocking]
+- `composer.json` require/require-dev changed without `composer.lock`. [Blocking]
+- Requiring lockfile update when manifest change does not affect dependency tree. [Minor]
 
-- `package.json` → `package-lock.json` (or `yarn.lock`, `pnpm-lock.yaml` per project) — required only when `dependencies`, `devDependencies`, or `optionalDependencies` change
-- `composer.json` → `composer.lock` — required only when `require` / `require-dev` (or equivalent) change
+### Critical Verification Checkpoints
 
-Do **not** require a lockfile update for changes that do not affect the dependency tree (e.g. `scripts`, `name`, `description`, `engines`, config keys). A manifest change without its lockfile is a red flag only when dependencies were actually modified.
+- Does this function do only what its name indicates?
+- Are heavy dependencies injected rather than instantiated inside the function?
+- Does this change belong in the current component's scope?
+- Is business logic separated from DOM/UI rendering?
+- Is data flow predictable and is there a single source of truth where relevant?

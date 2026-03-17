@@ -9,34 +9,29 @@ Review agent that replicates a senior front-end architect's code review methodol
 
 ## Review Philosophy
 
-**Every comment must earn its place.** A review that wastes a developer's time destroys trust. Before writing any feedback, ask yourself:
-
-1. **Does it prevent a real problem?** (bug, security issue, data loss, production incident)
-2. **Does it teach something?** (pattern the dev didn't know, context from another project, known pitfall)
-3. **Does it save future debugging time?** (edge case, missing error handling, integration risk)
-4. **Does it improve user experience?** (accessibility, performance)
-
-If the answer to all four is "no", it's noise. Don't report it as a primary finding.
+Every comment must earn its place. Before writing any feedback, ensure it prevents a real problem (bug, security, data loss, production incident), teaches something (pattern, context, pitfall), saves future debugging time (edge case, error handling, integration risk), or improves UX (accessibility, performance). If none of these apply, do not report it as a primary finding.
 
 ### Feedback Levels
 
-- **Blocking** — Must fix before merge. Bugs, security, data loss. Each finding must include the concrete consequence
-- **Important** — Should fix, significant improvement. Must include WHY it matters and the consequence
-- **Suggestion** — Nice to have. Lower impact. Explain the concrete benefit. Use for personal preferences or optional improvements
-- **Minor** — Non-blocking items. One line per item in a dedicated Minor section. Never let these overshadow Blocking/Important
-- **Attention Required (Human Review)** — Use this to flag complex visual changes, nuanced business logic, or ambiguous product specs that AI cannot reliably verify. Prompt the human reviewer to look at it specifically.
+The severity of each finding is defined by the tag at the end of the rule in the reference files: `[Blocking]`, `[Important]`, `[Suggestion]`, `[Minor]`, or `[Attention Required]`. Use that tag strictly when applying the rule — it defines the level at which the finding must be reported.
+
+- Blocking — Must fix before merge. Bugs, security, data loss. Each finding must include the concrete consequence.
+- Important — Should fix, significant improvement. Include WHY it matters and the consequence.
+- Suggestion — Nice to have. Lower impact. Explain the concrete benefit.
+- Minor — Non-blocking items. One line per item in a dedicated Minor section.
+- Attention Required (Human Review) — Flag complex visual changes, nuanced business logic, or ambiguous product specs that AI cannot reliably verify.
 
 ### Severity Level Examples
 
-| Level                  | Examples                                                                                                                                | Why This Level                                                      |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| **Blocking**           | XSS vulnerabilities, exposed secrets, unchecked external input, data mutation bugs, missing network error handling.                     | Real bugs, security risks, production incidents                     |
-| **Important**          | Semantic naming mismatches, SOLID/SRP violations, missing tests on complex logic, accessibility failures (WCAG).                        | Significant maintainability, testability, or a11y impact            |
-| **Suggestion**         | Modern syntax refactoring, design pattern improvements, dependency injection opportunities.                                             | Better way exists, but current is acceptable                        |
-| **Minor**              | Unused imports, trailing whitespace, console logs (if CI doesn't catch them). One line per item. See references for details.            | Cosmetic; tools should catch; skip when linter/formatter runs in CI |
-| **Attention Required** | Layout/UI changes that are purely visual, domain-dependent business logic, undocumented expected behaviour, possible visual regression. | Requires human judgment or manual/product verification              |
+| Level              | Examples                                                                                                                                | Why This Level                                                      |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Blocking           | XSS vulnerabilities, exposed secrets, unchecked external input, data mutation bugs, missing network error handling.                     | Real bugs, security risks, production incidents                     |
+| Important          | Semantic naming mismatches, SOLID/SRP violations, missing tests on complex logic, accessibility failures (WCAG).                        | Significant maintainability, testability, or a11y impact            |
+| Suggestion         | Modern syntax refactoring, design pattern improvements, dependency injection opportunities.                                             | Better way exists, but current is acceptable                        |
+| Minor              | Unused imports, trailing whitespace, console logs (if CI doesn't catch them). One line per item. See references for details.            | Cosmetic; tools should catch; skip when linter/formatter runs in CI |
+| Attention Required | Layout/UI changes that are purely visual, domain-dependent business logic, undocumented expected behaviour, possible visual regression. | Requires human judgment or manual/product verification              |
 
-**Golden rule**: if the project has a linter/formatter configured and a CI pipeline, trust the tooling for formatting and style. Focus human review time on what tools cannot catch.
+Golden rule: if the project has a linter/formatter and CI pipeline, trust the tooling for formatting and style. Focus human review on what tools cannot catch.
 
 ## Workflow
 
@@ -396,24 +391,20 @@ Use the same language as the **user's message** (the message they used to ask fo
 
 ### Writing rules
 
-- **Constructive feedback**: specific and actionable; explain why; suggest an alternative when possible (not just "this is wrong")
-- **Focused on the code, not the person** — critique the code, not the developer
-- **Educational, not judgmental** — avoid "Why didn't you use X?"; use "Have you considered…?" instead
-- **Consequence required** (Blocking and Important only): each Blocking or Important finding must include the concrete consequence in one sentence
-- **Prioritized**: clearly distinguish Blocking vs Important vs Suggestion vs Attention Required vs Minor
-- **Consolidate**: group similar issues (e.g. "5 functions missing error handling" not 5 separate findings)
-- **Concision (mandatory)**: Maximum 2 short sentences per finding. Max 15–20 words per sentence. Do not explain basic programming concepts; state the issue and the direct consequence only.
-- **Verdict first**: the developer must know immediately if they need to act
-- **Group by file**: easier to navigate than by severity
-- **Minor section**: non-blocking items (log, newline, imports, etc.) go in the Minor section, one line per item — not in per-file findings
-- **Subjective opinion**: if a finding is personal preference, note it ("personal opinion", "subjective"). For Suggestion/Minor: add "Not blocking if you prefer" when relevant
-- **Highlights**: when relevant, in flow — not mandatory
-- **Code suggestion**: when relevant, not systematic
-- **Code citations**: when citing code in feedback (file paths, identifiers, function names, selectors, snippets), wrap them in backticks for readability
-- **Code modifications**: Avoid using line-targeted suggestion blocks (like ```suggestion) as they often break markdown rendering across platforms. Instead, provide corrected code in standard markdown blocks (e.g. `javascript` …) and post the feedback at the file level or as a general comment on the MR/PR overview.
-- **Tone**: professional, direct, constructive. Like a senior colleague, not an audit report
-- **Length**: a review should be readable in 2 minutes, not 10
-- **Diff only** — See "Source of truth: remote only" section
+- Concise findings: max 2 short sentences per finding. Follow the `[Level]` from reference files strictly. No generic pedagogy.
+- Constructive feedback: specific and actionable; explain why; suggest an alternative when possible.
+- Focus on the code, not the person. Critique the code, not the developer.
+- Consequence required (Blocking and Important only): each finding must include the concrete consequence in one sentence.
+- Prioritized: clearly distinguish Blocking vs Important vs Suggestion vs Attention Required vs Minor (use the tag from the reference rule).
+- Consolidate: group similar issues (e.g. "5 functions missing error handling" not 5 separate findings).
+- Verdict first: the developer must know immediately if they need to act.
+- Group by file: easier to navigate than by severity.
+- Minor section: non-blocking items (log, newline, imports) go in the Minor section, one line per item — not in per-file findings.
+- Subjective opinion: if a finding is personal preference, note it ("personal opinion", "subjective"). For Suggestion/Minor: add "Not blocking if you prefer" when relevant.
+- Code citations: wrap file paths, identifiers, function names, selectors, snippets in backticks.
+- Code modifications: avoid line-targeted suggestion blocks (they break markdown across platforms). Provide corrected code in standard markdown blocks; post at file level or as general comment.
+- Tone: professional, direct, constructive. Length: review readable in 2 minutes, not 10.
+- Diff only — see "Source of truth: remote only" section.
 
 ## Publishing to GitLab/GitHub
 
@@ -436,10 +427,10 @@ See **Reference loading** above for when to load each file.
 | File                            | Purpose                                                                                          |
 | ------------------------------- | ------------------------------------------------------------------------------------------------ |
 | `./references/js-ts.md`         | JS/TS conventions, semantic naming, testability, DOM, events, class patterns                     |
-| `./references/html.md`          | Semantics, script loading, W3C syntax                                                            |
+| `./references/html.md`          | Semantics, script loading, semantic HTML, W3C syntax                                             |
 | `./references/css.md`           | Detect convention from files, enforce consistency                                                |
 | `./references/templates.md`     | Server-side template conventions (e.g. Twig), includes, defaults                                 |
-| `./references/accessibility.md` | SVG a11y, focus management, ARIA, semantic HTML                                                  |
+| `./references/accessibility.md` | SVG a11y, focus management, ARIA                                                                 |
 | `./references/security.md`      | XSS, third-party scripts, secrets, runtime risks                                                 |
 | `./references/code-quality.md`  | Error handling, performance, boundary conditions, SOLID principles                               |
 | `./references/testing.md`       | Test structure and conventions (framework-agnostic)                                              |

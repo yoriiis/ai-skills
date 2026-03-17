@@ -4,93 +4,55 @@ Reference standards for server-side HTML template review. Generic rules applicab
 
 ---
 
-## General Principles (Applicable to JSX, Vue, Twig, etc.)
+## General Principles
 
-- **No Business Logic**: Templates must remain strictly presentational. Complex data manipulation, filtering, or business rules must be handled in controllers, services, or hooks, not in the template.
-- **Component complexity & scope** (framework-agnostic): flag oversized or multi-responsibility templates/components as **Important** and suggest splitting; check that changes belong in the current component.
+- Templates containing business logic, data manipulation, filtering, or business rules — keep presentational only. [Important]
+- Oversized or multi-responsibility templates/components — flag and suggest splitting. [Important]
+- Changes that do not belong in the current component's scope. [Important]
 
-## Twig Specifics
+## Twig: Include & Isolation
 
-### Include & Isolation
+- Using `{% include %}` tag instead of `include()` function in Twig. [Suggestion]
+- Twig `include()` without `false` as third argument (variable leakage into included template). [Important]
 
-- Use `include()` function, not `{% include %}` tag
-- Always pass `false` as third argument to prevent variable leakage into the included template:
+## Twig: Variable Defaults
 
-```twig
-{{ include('component/views/component.html.twig', {
-    data: data,
-}, false) }}
-```
+- Variable defaults not defined at the top of the template, before any HTML. [Suggestion]
+- Using `|default()` for booleans — use `??` (null coalescing); `|default()` treats `false`, `0`, `""`, `null` as empty. [Important]
+- Using `|default('')` for non-string fallbacks. [Suggestion]
+- Unnecessary ternary with empty string fallback (e.g. `isActive ? 'isActive' : ''`) — Twig handles falsy natively. [Minor]
 
-### Variable Defaults
+## Twig: Security (XSS)
 
-- Define variable defaults at the top of the template, before any HTML:
+- User-controlled or dynamic data rendered without contextual escaping (`|e('html')`, `|e('html_attr')`, `|e('js')`); `|raw` only when explicitly trusted and sanitized. [Blocking]
 
-```twig
-{% set hasSidebar = hasSidebar ?? true %}
-{% set additionalClass = additionalClass|default('') %}
-```
+## Component Structure
 
-- Prefer `??` (null coalescing) for booleans — it only checks if the variable is defined, not if it's falsy
-- Use `|default('')` only for string fallbacks
-- **Never `|default(true)` or `|default(false)` on booleans** — `|default()` treats `false`, `0`, `""`, `null` as empty and replaces them with the default. Passing `false` from a parent template becomes impossible. Use `??` instead:
+- More than 2 levels of nesting for sub-components. [Suggestion]
+- Macros not imported at the top of the file, before any HTML. [Minor]
+- Using classes for JavaScript hooks instead of data attributes. [Suggestion]
 
-```twig
-{# Bad — if parent passes false, it gets overridden to true #}
-{% set hasSidebar = hasSidebar|default(true) %}
+## Class Naming
 
-{# Good — only applies if hasSidebar is not defined at all #}
-{% set hasSidebar = hasSidebar ?? true %}
-```
+- Class naming not matching existing template and CSS convention. [Important]
 
-### Ternary Simplification
+## Quotes & Interpolation
 
-- Avoid unnecessary ternary with empty string fallback:
+- Static strings with double quotes when single quotes suffice. [Minor]
+- Interpolation possible but concatenation used (e.g. `'Hello ' ~ name`). [Suggestion]
 
-```twig
-{# Bad — the empty string is useless #}
-{{ isActive ? 'isActive' : '' }}
+## Naming & Formatting
 
-{# Good — Twig handles falsy values natively #}
-{{ isActive ? 'isActive' }}
-```
+- Variables with non-descriptive names (`a`, `b`, `e`, `item1`). [Important]
+- Template not readable without external context. [Important]
+- Inconsistent indentation or not aligned with HTML structure. [Minor]
+- Indentation not following project convention (check existing `.twig` files). [Minor]
+- Multi-line structures without trailing comma or single-line with trailing comma. [Minor]
+- Missing final newline at end of file. [Minor]
 
-### Security (XSS)
+### Critical Verification Checkpoints
 
-- **Contextual escaping**: Use Twig's auto-escaping and the appropriate escape context for each output — `|e('html')` for HTML content, `|e('html_attr')` for attributes, `|e('js')` for JS contexts, `|raw` only when the content is explicitly trusted and already sanitized. Prevents XSS when user-controlled or dynamic data is rendered.
-
-### Component Structure
-
-- Avoid sub-sub-components: max 2 levels of nesting
-- Import macros at the top of the file, before any HTML
-- Use data attributes for JavaScript hooks (not classes)
-
-### Class Naming in Templates
-
-Respect the convention already present in existing template and CSS files. Detect class naming patterns (BEM, utility classes, etc.) from the codebase and match them. If no convention is detected, do not impose.
-
-### Quotes
-
-- Single quotes by default for all static strings
-- Double quotes only when using interpolation: `"#{variable}"`
-- Prefer interpolation over concatenation:
-
-```twig
-{# Bad — concatenation #}
-{{ 'Hello ' ~ name ~ ', welcome!' }}
-
-{# Good — interpolation #}
-{{ "Hello #{name}, welcome!" }}
-```
-
-### Naming
-
-- Variables must have descriptive names — no `a`, `b`, `e`, `item1`
-- The template must be readable without external context
-- Clear indentation: consistent depth, aligned with the HTML structure
-
-### Formatting
-
-- Indentation: follow the project convention (check existing `.twig` files — often 4 spaces, enforced by `twig-cs-fixer` if present)
-- Trailing comma in multi-line structures, no trailing comma on single-line
-- Final newline at end of file
+- Is all output escaped for the correct context (html, html_attr, js)?
+- Are boolean defaults using ?? rather than |default(true/false)?
+- Does the template stay presentational (no business logic)?
+- Are data attributes used for JS hooks instead of classes?

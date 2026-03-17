@@ -6,150 +6,87 @@ Reference standards for JS/TS review. Only enforce rules that match the target p
 
 ## Module Format
 
-- Follow the project's module format (ESM or CJS) — check `"type"` field in `package.json` and existing import/export syntax
-- New files must use the same format as the rest of the project (don't mix `require` and `import`)
+- New files not using the project's module format (ESM or CJS) — check `package.json` and existing imports. [Important]
+- Mixing `require` and `import` in the same project. [Important]
 
 ## TypeScript Rules
 
-Only apply if the project has a `tsconfig.json`. If the project is in plain JS, do not suggest TypeScript.
-
-- Use `type` for type declarations. `interface` is reserved for types with inheritance (e.g., extending `Window`)
-- Types are declared where they are used (inline in the function). Only extract to a separate location when shared across files
-- New files: always `.ts` / `.tsx`
-- Exported functions: explicit return types required, including `: void` when the function returns nothing
-- Array types: prefer `Element[]` over `Array<Element>`
-- Avoid `as` assertions — prefer type guards / narrowing
-- No `any` — use `unknown` + narrowing or proper generics
-- Packages without declaration files can be declared in a `modules.d.ts` file
-- JSON imports: be careful with TypeScript 5.7+ new syntax (not yet transpilable by Babel for web)
+- Use `interface` for types without inheritance; prefer `type` for declarations. [Suggestion]
+- Types declared in a separate location when only used in one function — declare where used. [Suggestion]
+- New files not `.ts` / `.tsx` when project has TypeScript. [Important]
+- Exported functions without explicit return types (including `: void` when returning nothing). [Important]
+- Array types using `Array<Element>` instead of `Element[]`. [Minor]
+- `as` assertions instead of type guards or narrowing. [Suggestion]
+- Use of `any` — use `unknown` + narrowing or proper generics. [Important]
+- Packages without declaration files not declared in `modules.d.ts`. [Suggestion]
 
 ## Code Hygiene
 
-- `console.log` / `console.info` / `console.debug` — **Minor** unless contains PII/secrets (then **Blocking**)
-- No commented-out code
-- Remove unused imports
-- Prefer `const` over `let`, never `var` — **Suggestion** if linter present, **Important** if no linter
-- **Early returns** — prefer early return over nested `else` blocks; exit conditions early to keep the happy path readable
-- If a function takes more than 2 parameters, use destructuring syntax
-- Create descriptive named variables for timer values (not magic numbers)
-- Functions longer than ~30 lines or with multiple nesting levels should be extracted into smaller functions
-- Avoid code duplication — factor shared logic
-- **Anonymous functions**: In **React/Vue/Svelte** JSX/Templates, simple inline arrow functions for passing props are acceptable (e.g. `onClick={() => setOpen(true)}`). Flag as **Suggestion** only if the handler becomes complex. **Important** for: native `addEventListener` (named handler required for `removeEventListener`), complex calculations, and data manipulation logic that should be named and exportable for unit tests
-- **Data attributes**: Prefer `getAttribute('data-xxx')` over `element.dataset.xxx` for performance — `dataset` forces the browser to build `DOMStringMap` and parse camelCase. This is a global **Suggestion**. Upgrade to **Important** only when access occurs in a **critical rendering path** (e.g., inside `requestAnimationFrame`, or in loops that massively process the DOM for virtual lists). Do not flag as Important for small classic loops (e.g., `.map` over a few elements)
-- Use `setAttribute` / `getAttribute` for attribute manipulation
-- Convert NodeList to Array with `[...nodeList]` or `Array.from(nodeList)` — both are equivalent in modern environments. Prefer spread for brevity when destructuring
+- `console.log` / `console.info` / `console.debug` containing PII or secrets. [Blocking]
+- `console.log` / `console.info` / `console.debug` (no PII) when linter does not catch them. [Minor]
+- Commented-out code left in place. [Minor]
+- Unused imports. [Minor]
+- Prefer `const` over `let`, never `var` — Suggestion if linter present, Important if no linter. [Suggestion]
+- Nested `else` blocks instead of early returns. [Suggestion]
+- Function with more than 2 parameters without destructuring syntax. [Suggestion]
+- Timer values as magic numbers instead of descriptive named variables. [Suggestion]
+- Functions longer than ~30 lines or with multiple nesting levels not extracted into smaller functions. [Important]
+- Code duplication — factor shared logic. [Important]
+- Mutating state, arrays, or objects directly — prefer pure functions, copying (spread), or project state management. [Important]
+- Native `addEventListener` with anonymous handler (named handler required for `removeEventListener`). [Important]
+- Complex calculations or data manipulation in inline handlers that should be named and exportable for tests. [Important]
+- Prefer `getAttribute('data-*')` over `dataset` in critical paths or loops. [Suggestion]
+- Use `setAttribute` / `getAttribute` for attribute manipulation. [Suggestion]
+- NodeList not converted to Array with `[...nodeList]` or `Array.from(nodeList)` when iteration or array methods needed. [Minor]
 
 ## DOM & Events
 
-- Use data attributes for JavaScript hooks: `[data-bookmark-button]`, `element.getAttribute('data-bookmark-id')`
+- JavaScript hooks not using data attributes (e.g. `[data-bookmark-button]`, `getAttribute('data-bookmark-id')`). [Suggestion]
 
 ## Modern Syntax (ES6+)
 
-Prefer modern ES6+ constructs when they improve readability or safety. Flag as **Suggestion** when an opportunity is obvious:
-
-- **Optional chaining** (`?.`) — avoid long chains of `&&` for nested property access
-- **Nullish coalescing** (`??`) — use instead of `||` when `0`, `""`, `false` are valid values
-- **Destructuring** — for function parameters, return values, and variable declaration
+- Long chains of `&&` for nested property access instead of optional chaining (`?.`). [Suggestion]
+- Using `||` when `0`, `""`, `false` are valid values instead of nullish coalescing (`??`). [Suggestion]
+- Missing destructuring for function parameters, return values, or variable declaration when it improves readability. [Suggestion]
 
 ## Structured Units (Modules, Hooks, Classes)
 
-Prefer **encapsulation in isolated units** (Classes, Hooks, or Modules) that facilitate dependency injection (DIP) and unit testing. Adapt to the project's existing paradigm; do not impose classes if the project uses modules or hooks.
-
-**If the project uses classes**, standard structure:
-
-```javascript
-export default class ComponentName {
-  constructor(options) {
-    this.element = options.element;
-    this.onClickHandler = this.onClickHandler.bind(this);
-  }
-
-  async init() {
-    this.addEvents();
-  }
-
-  addEvents() {
-    this.element.addEventListener('click', this.onClickHandler);
-  }
-
-  onClickHandler(event) {}
-}
-```
-
-- Follow naming convention for main class methods: `init`, `addEvents`
-- Prefer `getter` / `setter` for improved readability
-- Bind event handlers in constructor when they need `this` context
-- Order class methods logically for readability (constructor → init → addEvents → handlers → utilities)
-
-## Testability
-
-Write functions as if they will be tested—even if no tests exist. Use the following detection rules:
-
-**SRP (Single Responsibility) — Flag as Important:**
-
-- Function with side effects not indicated by name (`getUser()` that also updates the database)
-- Function doing 2+ unrelated things (validation + API call + DOM manipulation)
-
-**DIP (Dependency Inversion) — Flag as Suggestion:**
-
-- Hard-coded imports/instantiation inside functions
-- Anonymous functions in event listeners (use named methods)
+- Class structure not following project convention: constructor → init → addEvents → handlers → utilities. [Suggestion]
+- Event handlers needing `this` context not bound in constructor. [Important]
 
 ## JSX/TSX
 
-Check `package.json` for `react`, `preact`, or `jsx-dom`. All JSX-based frameworks use `className` (not `class`) for CSS classes — `class` is reserved in JavaScript; Biome/ESLint enforce `className`. This rule applies regardless of the framework.
-
-- Use `className` (not `class`) for CSS classes in JSX
-- For React/Preact: components return virtual DOM; adapt to project conventions (hooks, patterns)
-- For jsx-dom/jsx-dom-cjs: components return DOM elements. Every dependency (SVG, CSS, JS) must be explicitly imported in the component that uses it — never rely on another component having already imported it
+- Use `className` (not `class`) for CSS classes in JSX. [Important]
+- jsx-dom: dependency (SVG, CSS, JS) not explicitly imported in the component that uses it. [Important]
 
 ## Naming Conventions
 
-- `camelCase`: variables, functions
-- `PascalCase`: classes, components, types/interfaces
-- `SCREAMING_SNAKE_CASE`: constants
-- File names must match project convention (detect from existing files)
+- Non-descriptive names (`data`, `item`, `x`, `handle()`, `process()`). [Important]
+- Generic class names (`Manager`, `Helper`, `Service`). [Important]
 
-**Flag as Important:**
+## Semantic Function Naming
 
-- Non-descriptive names (`data`, `item`, `x`, `handle()`, `process()`)
-- Generic class names (`Manager`, `Helper`, `Service`)
-
-## Semantic Function Naming (Golden Rule)
-
-Any function that returns a value must use a prefix indicating the return type. **Strict prefix/return correspondence** — any mismatch is **Important**.
-
-| Prefix                            | Expected Return                               | Mismatch = Level |
-| --------------------------------- | --------------------------------------------- | ---------------- |
-| `isXxx()` / `hasXxx()`            | **Boolean** only                              | **Important**    |
-| `getXxx()` / `fetchXxx()`         | Non-void (Value, Object, or Promise required) | **Important**    |
-| `validateXxx()` (throws on error) | void, no return — throws if invalid           | **OK** (correct) |
-| `validateXxx()` (returns boolean) | **Mismatch** — rename to `isXxxValid`         | **Important**    |
-| `calculateXxx()` / `computeXxx()` | Derived value                                 | **Important**    |
-| `toXxx()` / `asXxx()`             | Converted type                                | **Suggestion**   |
-| `createXxx()` / `buildXxx()`      | New instance                                  | **Suggestion**   |
-| `updateXxx()` / `setXxx()`        | Modified object / void                        | **Important**    |
-
-> **Note**: `validateXxx` is correct when the function throws on error and returns nothing. If it returns `true`/`false`, use `isXxxValid` instead.
-
-**Exception for reactive components:** Functions like `fetchXxx()`, `loadXxx()` or `getXxx()` may return `void` without triggering an **Important** alert when used in a **reactive component context** (React, Vue, Svelte) where they serve to update internal or local state (e.g., calling a state setter). In such cases, the semantic intent is "fetch and update state", not "fetch and return data".
-
-**Callbacks and event handlers:** Their role is to react to an event or delegate an action, not to return data. They use the `onXxx` (e.g. `onClick`) or `handleXxx` (e.g. `handleClick`) convention; the return-type prefix table above does not apply to them. Do not flag these for missing `is`/`get` prefixes.
-
-**Flag as Important:**
-
-- Any function starting with `get` or `fetch` that has no `return` statement or explicitly returns `undefined`/`void`
-- `isXxx()` / `hasXxx()` returning non-boolean
-- `validateXxx()` that returns a boolean — rename to `isXxxValid`
-- `getUser()` returns a `Car` or `Order` (wrong type)
-- `fetchData()` that doesn't make a network call
-
-**Flag as Suggestion:**
-
-- `getUser()` returns `{ user, metadata }` instead of just `user`
+- Function prefix/return type mismatch (e.g. `isXxx` / `hasXxx` returning non-boolean). [Important]
+- `getXxx()` / `fetchXxx()` with no return statement or explicitly returns `undefined`/`void` (outside reactive component context). [Important]
+- `validateXxx()` that returns boolean — rename to `isXxxValid`. [Important]
+- `getXxx()` / `fetchXxx()` returning wrong type (e.g. `getUser()` returns `Car`). [Important]
+- `fetchXxx()` that does not make a network call. [Important]
+- `calculateXxx()` / `computeXxx()` not returning derived value. [Important]
+- `updateXxx()` / `setXxx()` not modifying object or returning void. [Important]
+- `getXxx()` returning `{ user, metadata }` instead of single value — flag as Suggestion. [Suggestion]
+- `toXxx()` / `asXxx()` not returning converted type. [Suggestion]
+- `createXxx()` / `buildXxx()` not returning new instance. [Suggestion]
 
 ## JSDoc
 
-- Add JSDoc comments on all exported functions
-- In JS: include `@param`, `@returns`, `@async` tags with types
-- In TS: do NOT duplicate types in JSDoc — TypeScript already provides them. Keep the description, but omit `@param {string}` type annotations. `@param name` with a description is enough
+- Exported functions without JSDoc comments. [Suggestion]
+- In JS: JSDoc missing `@param`, `@returns`, `@async` tags with types. [Suggestion]
+- In TS: JSDoc duplicating type annotations — keep description only, omit `@param {string}`. [Minor]
+
+### Critical Verification Checkpoints
+
+- Does the function name match its return type and side effects?
+- Is state mutated directly instead of via copy or pure functions?
+- Are event handlers named when removeEventListener is needed?
+- Is dataset used in hot loops or critical path (prefer getAttribute)?
+- Would optional chaining or nullish coalescing simplify this code?

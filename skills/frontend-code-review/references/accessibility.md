@@ -6,41 +6,40 @@ Reference standards for accessibility review.
 
 ## SVG
 
-- All decorative SVGs must have `aria-hidden="true"` and `focusable="false"`
-- SVG inside a button/link (icon-only): add a `<span class="sr-only">` with description
-- Informational SVGs (not in button/link): use `aria-hidden="false"`, `role="img"`, `aria-label="description"`
-- SVG sprite parent: `<svg aria-hidden="true" style="position: absolute; width: 0; height: 0; overflow: hidden;">`
-- SVGs must use `viewBox` (not fixed `width`/`height`), exported edge-to-edge — consider sprite optimization and SVGO
+- Decorative SVGs without `aria-hidden="true"` and `focusable="false"`. [Important]
+- SVG inside a button/link (icon-only) without a `<span class="sr-only">` with description. [Important]
+- Informational SVGs (not in button/link) without `aria-hidden="false"`, `role="img"`, `aria-label`. [Important]
+- SVG sprite parent without `aria-hidden="true"` and hidden from layout (e.g. position absolute, width 0, height 0, overflow hidden). [Important]
+- SVGs without `viewBox` (fixed `width`/`height` instead) — consider sprite optimization and SVGO. [Important]
 
 ## Focus Management
 
-- When opening a modal/menu: move focus to an element inside it (e.g., close button)
-- Focus must only be set when the target element is visible — wait for CSS transition to end before calling `.focus()`
-- Restrict keyboard navigation inside the modal (focus trap: first ↔ last focusable element)
-- **Important**: When closing a modal, return focus to the element that triggered the opening — critical for keyboard navigation and screen reader users
+- When opening a modal/menu: move focus to an element inside it (e.g. close button). [Important]
+- Set focus only when the target element is visible — wait for CSS transition to end before calling `.focus()`. [Important]
+- Restrict keyboard navigation inside the modal (focus trap: first ↔ last focusable element). [Important]
+- Return focus to the trigger element after closing a modal or menu. [Important]
 
 ## Interactive Elements
 
-- `<a>` for navigation, `<button>` for actions — never the opposite
-- **Forms & Inputs**: Every form field must have a programmatically associated `<label>`. If a visual label is impossible, use `aria-label` or `aria-labelledby`
-- **Color Contrast**: Ensure text and interactive elements meet WCAG AA standards (4.5:1 for normal text). Do not rely on color alone to convey information
-- Click/touch targets: minimum 44×44px (WCAG 2.1 AAA, Apple HIG)
-- Custom interactive elements (e.g., adding onClick to a `<div>` or `<span>`) MUST include `tabindex="0"` to be focusable AND a keyboard event listener (e.g., onKeyDown for Enter/Space keys) to be accessible.
+- Use `<a>` for navigation, `<button>` for actions — never the opposite. [Important]
+- Form field without a programmatically associated `<label>` (or `aria-label` / `aria-labelledby` if visual label impossible). [Important]
+- Text or interactive elements not meeting WCAG AA contrast (4.5:1 for normal text); relying on color alone to convey information. [Important]
+- Click/touch targets below minimum 44×44px (WCAG 2.1 AAA, Apple HIG). [Important]
+- Custom interactive elements (e.g. onClick on `<div>` or `<span>`) without `tabindex="0"` and keyboard event listener (Enter/Space). [Important]
 
 ## Images
 
-- All `<img>` must have an `alt` attribute (empty `alt=""` for decorative images)
+- `<img>` without `alt` attribute (use empty `alt=""` for decorative images). [Important]
 
 ## ARIA & Dynamic Content
 
-- Use `aria-live="polite"` for dynamic content updates (toast notifications, form validation messages, loading states)
-- Use `aria-live="assertive"` only for critical alerts that require immediate attention
-- Add `role="alert"` or `role="status"` on containers that update dynamically
-- Hidden content toggled by JS must update `aria-expanded` on the trigger element
+- Dynamic content updates (toast, form validation, loading) without `aria-live="polite"` or `aria-live="assertive"` for critical alerts. [Important]
+- Containers that update dynamically without `role="alert"` or `role="status"`. [Important]
+- Hidden content toggled by JS without `aria-expanded` updated on the trigger element. [Important]
 
-## Semantic HTML
+### Critical Verification Checkpoints
 
-This section covers accessibility-specific semantic concerns.
-
-- Heading hierarchy skips break screen reader navigation (`h1` → `h3` without `h2`)
-- Non-semantic interactive elements (`<div onclick>`) are invisible to assistive technologies — use `<button>` or `<a>`
+- Is focus moved into the modal on open and returned to the trigger on close?
+- Are all interactive elements keyboard-accessible and correctly labeled?
+- Do SVGs have appropriate roles and labels (or aria-hidden for decorative)?
+- Is color contrast sufficient and is information not conveyed by color alone?

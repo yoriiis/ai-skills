@@ -1,91 +1,78 @@
 # Security & Reliability
 
-Checklist for security review, adapted for front-end web projects.
-Focus on client-side vulnerabilities and third-party integrations.
-
-> **Source of truth for security strategy**: why we sanitize, XSS principles, runtime risks. For concrete detection patterns (e.g. flagging `innerHTML` as Blocking), apply the rules loaded by the skill for JS/TS.
+Checklist for security review, adapted for front-end web projects. Focus on client-side vulnerabilities and third-party integrations.
 
 ---
 
 ## Input/Output Safety
 
-- **XSS**: Unsafe HTML injection via `innerHTML`, `outerHTML`, `insertAdjacentHTML`, `document.write` with user/dynamic input
-- If user HTML must be rendered: use a sanitizer (DOMPurify, etc.) with strict allowlist — prefer `textContent` or escaping
-- **Template injection**: Unescaped variables in server-side templates or string interpolation
-- **Prototype pollution**: Unsafe object merging (`Object.assign`, spread) with user-controlled data
-- **URL manipulation**: User input in `href`, `src`, `action` attributes without validation (javascript: protocol, data: URIs)
-
-### Questions to Ask
-
-- "Is this content escaped before insertion into the DOM?"
-- "Can an attacker control any part of this URL/attribute value?"
+- Unsafe HTML injection (`innerHTML`, `insertAdjacentHTML`) without prior sanitization. [Blocking]
+- User HTML rendered without a sanitizer (DOMPurify, etc.) with strict allowlist — prefer `textContent` or escaping. [Blocking]
+- Unescaped variables in server-side templates or string interpolation (template injection). [Blocking]
+- Unsafe object merging (`Object.assign`, spread) with user-controlled data (prototype pollution). [Blocking]
+- User input in `href`, `src`, `action` attributes without validation (javascript: protocol, data: URIs). [Blocking]
 
 ## Third-Party Scripts
 
-- Scripts from ad networks, analytics, or vendors loaded without `integrity` attribute (SRI)
-- Missing `crossorigin` attribute on cross-origin scripts
-- Third-party scripts loaded synchronously (blocking render)
-- Unknown or undocumented script attributes (`nowprocket`, `data-cfasync`, etc.)
-- Vendor scripts with obfuscated/minified code committed directly (should use CDN or npm package)
-
-### Questions to Ask
-
-- "What does this third-party script do? Is it documented?"
-- "What happens if this CDN goes down?"
+- Scripts from ad networks, analytics, or vendors loaded without `integrity` attribute (SRI). [Important]
+- Missing `crossorigin` attribute on cross-origin scripts. [Important]
+- Third-party scripts loaded synchronously (blocking render). [Important]
+- Unknown or undocumented script attributes (`nowprocket`, `data-cfasync`, etc.). [Suggestion]
+- Vendor scripts with obfuscated/minified code committed directly (use CDN or npm package). [Suggestion]
 
 ## Secrets & PII
 
-- API keys, tokens, or credentials in client-side code or git history
-- Auth tokens (JWT, session ID) in `localStorage` — vulnerable to XSS; prefer httpOnly cookies when backend controls auth
-- **Sensitive data in `localStorage` or `sessionStorage` — forbidden.** Do not store PII, tokens, or any sensitive data in Web Storage. Client-side encryption is security theater: the decryption key lives in the bundle and is trivial to extract via XSS. Use httpOnly cookies or server-side session for auth and sensitive data.
-- Excessive logging of user data (PII in `console.log`)
-- Hardcoded environment-specific values (localhost URLs, staging API endpoints, test tokens)
+- PII, API keys, or auth tokens in `localStorage`, `sessionStorage`, or logs. [Blocking]
+- Auth tokens (JWT, session ID) in `localStorage` — prefer httpOnly cookies when backend controls auth. [Blocking]
+- Excessive logging of user data (PII in `console.log`). [Blocking]
+- Hardcoded environment-specific values (localhost URLs, staging API endpoints, test tokens). [Important]
 
 ## Supply Chain & Dependencies
 
-- **Dependency Review**: If a new package is added, verify that it **exists** (not an AI hallucination or typo-squatting: check npm registry, spelling, and official package name), then verify its health (popularity, maintenance, known vulnerabilities) and its impact on the bundle size
-- Dependency version format inconsistent with project convention (check existing `package.json`)
-- Dependency added without justification (bundle size impact)
-- Importing from untrusted CDNs without `integrity` check
-- **Known vulnerabilities (CVE)**: Do not assume real-time CVE knowledge. Rely on CI logs (e.g. check if an `npm audit` or equivalent job failed) or use a web search tool when a new major package is introduced. Flag when CI reports vulnerabilities; for ad-hoc checks, use external lookup
-- Outdated dependencies with known CVEs (when surfaced by CI or manual audit)
+- New package added without verifying it exists (npm registry, spelling, official name) and health (popularity, maintenance, vulnerabilities, bundle size). [Important]
+- Dependency version format inconsistent with project convention. [Suggestion]
+- Dependency added without justification (bundle size impact). [Suggestion]
+- Importing from untrusted CDNs without `integrity` check. [Important]
+- CI reports vulnerabilities (npm audit or equivalent failed) — flag and do not merge. [Blocking]
+- Outdated dependencies with known CVEs when surfaced by CI or manual audit. [Important]
 
 ## CORS & Headers
 
-- Overly permissive CORS (`Access-Control-Allow-Origin: *` with credentials)
-- Missing security headers on served pages (CSP, X-Frame-Options, X-Content-Type-Options)
-- `target="_blank"` links without `rel="noopener noreferrer"` (older browsers)
+- Overly permissive CORS (`Access-Control-Allow-Origin: *` with credentials). [Important]
+- Missing security headers on served pages (CSP, X-Frame-Options, X-Content-Type-Options). [Important]
+- `target="_blank"` links without `rel="noopener noreferrer"`. [Important]
 
 ## Runtime Risks
 
-- Unbounded loops or recursive calls that can freeze the browser tab
-- Missing timeouts on `fetch` / `XMLHttpRequest` calls
-- Blocking operations on the main thread (sync XHR, heavy computation without Web Worker)
-- Event listeners added without cleanup (memory leaks on SPA navigation or component destroy)
-- `setInterval` without clear condition (polling that never stops)
-- ReDoS: complex regex on user input
-
-### Questions to Ask
-
-- "What happens if the network request takes 30 seconds?"
-- "Is this listener cleaned up when the component is destroyed?"
+- Unbounded loops or recursive calls that can freeze the browser tab. [Blocking]
+- Missing timeouts on `fetch` / `XMLHttpRequest` calls. [Important]
+- Blocking operations on the main thread (sync XHR, heavy computation without Web Worker). [Important]
+- Event listeners added without cleanup (memory leaks on SPA navigation or component destroy). [Important]
+- `setInterval` without clear condition (polling that never stops). [Important]
+- ReDoS: complex regex on user input. [Important]
 
 ## Async & State
 
-- Race conditions: concurrent async operations modifying shared state
-- Check-then-act patterns without atomicity (`if (exists) then use`)
-- Stale closures capturing outdated state in event handlers or timeouts
-- Missing error handling on `fetch` / async operations (no `.catch()`, no `try/catch`)
-
-### Questions to Ask
-
-- "What happens if the user clicks this button twice quickly?"
-- "What if the response arrives after the component is unmounted?"
+- Race conditions: concurrent async operations modifying shared state. [Important]
+- Check-then-act patterns without atomicity (`if (exists) then use`). [Important]
+- Stale closures capturing outdated state in event handlers or timeouts. [Important]
+- Missing error handling on `fetch` / async operations (no `.catch()`, no `try/catch`). [Important]
 
 ## Data Integrity
 
-- Form submissions without client-side validation
-- File uploads: no client-side validation (type, size) before submission — first barrier in addition to server-side validation
-- API error responses displayed without filtering (stack traces, internal paths, DB details exposed to user)
-- Trusting client-provided data for business logic (price, role, permissions)
-- Missing idempotency on retry-able operations (double submit)
+- Form submissions without client-side validation. [Important]
+- File uploads without client-side validation (type, size) before submission. [Important]
+- API error responses displayed without filtering (stack traces, internal paths, DB details exposed). [Blocking]
+- Trusting client-provided data for business logic (price, role, permissions). [Blocking]
+- Missing idempotency on retry-able operations (double submit). [Important]
+
+### Critical Verification Checkpoints
+
+- Is this content escaped before insertion into the DOM?
+- Can an attacker control any part of this URL/attribute value?
+- What does this third-party script do? Is it documented?
+- What happens if this CDN goes down?
+- What happens if the network request takes 30 seconds?
+- Is this listener cleaned up when the component is destroyed?
+- What happens if the user clicks this button twice quickly?
+- What if the response arrives after the component is unmounted?

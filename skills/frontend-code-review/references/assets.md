@@ -6,46 +6,30 @@ Reference standards for image and SVG asset optimization.
 
 ## Images
 
-### File size & Layout Stability
-
-- Images should not be excessively heavy — flag if obvious oversizing
-- **Prevent CLS**: Always provide `width` and `height` attributes (or a CSS `aspect-ratio`) to allow the browser to reserve space before the image loads
-- Consider lazy loading (`loading="lazy"`) for below-the-fold images
-
-### Format
-
-- Prefer modern formats when supported: WebP, AVIF over PNG/JPEG when the project supports them
-- PNG for transparency, JPEG for photos, SVG for icons/logos when appropriate
-- Flag if a PNG could be WebP/AVIF with similar quality at lower size (project/build context permitting)
-
----
+- Excessively heavy images (obvious oversizing). [Suggestion]
+- Missing `width` and `height` (or aspect-ratio) on images (prevents CLS). [Important]
+- Heavy images without `loading="lazy"` below the fold. [Suggestion]
+- Prefer modern formats when supported: WebP, AVIF over PNG/JPEG when the project supports them. [Suggestion]
+- PNG used where WebP/AVIF could achieve similar quality at lower size (project/build context permitting). [Suggestion]
 
 ## SVG
 
-### Optimization
-
-- SVGs should be optimized with **SVGO** (or equivalent) — remove metadata, unnecessary attributes, default values
-- SVG should be **minified** — no unnecessary whitespace, compact attributes
-- Inline SVG: avoid redundant `xmlns` if HTML5 parser handles it; keep only essential attributes
-
-### Sprite usage
-
-When SVG is used in a **sprite** (e.g. `<symbol>` inside a shared `<svg>`):
-
-- **No fixed `width` and `height`** on the sprite symbol or use element — use `viewBox` only
-- Sizing controlled via CSS (`width`, `height` on the `<use>` reference or wrapper)
-- Sprite container: typically `style="position: absolute; width: 0; height: 0; overflow: hidden;"` to hide from layout
-
-### Questions to ask
-
-- "Could this image be served in a more efficient format?"
-- "Has this SVG been run through SVGO?"
-- "Is this sprite symbol using only viewBox (no width/height)?"
-
----
+- SVG not optimized with SVGO (or equivalent) — remove metadata, unnecessary attributes, default values. [Suggestion]
+- SVG not minified — unnecessary whitespace, non-compact attributes. [Minor]
+- Inline SVG with redundant `xmlns` when HTML5 parser handles it. [Minor]
+- SVG sprites using fixed `width`/`height` instead of `viewBox`. [Important]
+- Sprite symbol or use element with fixed width/height — use `viewBox` only, size via CSS on `<use>` or wrapper. [Important]
+- Sprite container not hidden from layout (e.g. position absolute, width 0, height 0, overflow hidden). [Suggestion]
+- SVG icons/decorative elements missing `aria-hidden="true"`. [Important]
 
 ## Fonts
 
-- Use `font-display: swap` (or project-appropriate value) to avoid FOIT and improve LCP/CLS
-- Preload critical fonts above the fold with `<link rel="preload">` when relevant
-- Flag as **Suggestion** by default; **Important** if blocking fonts lack `font-display` on immediately visible text
+- Fonts without `font-display: swap` (or project-appropriate value) — avoid FOIT, improve LCP/CLS. [Suggestion]
+- Critical fonts above the fold without `<link rel="preload">` when relevant. [Suggestion]
+- Blocking fonts on immediately visible text without `font-display`. [Important]
+
+### Critical Verification Checkpoints
+
+- Could this image be served in a more efficient format (WebP/AVIF)?
+- Has this SVG been run through SVGO?
+- Is this sprite symbol using only viewBox (no width/height)?
