@@ -2,6 +2,7 @@
 
 Apply these rules when formatting findings in the review report and when posting comments on the MR/PR.
 
+- Language: use the user's message language; default to English if ambiguous.
 - Concise findings: max 2 short sentences per finding. Follow the `[Level]` from reference files strictly. No generic pedagogy.
 - Constructive feedback: specific and actionable; explain why; suggest an alternative when possible.
 - Focus on the code, not the person. Critique the code, not the developer.
@@ -17,3 +18,4 @@ Apply these rules when formatting findings in the review report and when posting
 - Code modifications: avoid line-targeted suggestion blocks (they break markdown across platforms). Provide corrected code in standard markdown blocks; post at file level or as general comment.
 - Tone: professional, direct, constructive. Length: review readable in 2 minutes, not 10.
 - Diff only — see "Source of truth: remote only" section in SKILL.md.
+- When posting: prefer overview notes over inline thread replies; no thread on pipeline status; AI disclosure mandatory (`---` then `*AI-assisted review (skill frontend-code-review)*`).

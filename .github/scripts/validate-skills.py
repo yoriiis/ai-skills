@@ -30,7 +30,7 @@ def validate_skill(skill_dir):
     else:
         try:
             data = yaml.safe_load(match.group(1))
-            required_keys = ["name", "title", "topic", "description"]
+            required_keys = ["name", "tags", "description"]
             for key in required_keys:
                 if key not in data or not data[key]:
                     print(f"❌ {skill_name}: Missing or empty metadata '{key}'")
