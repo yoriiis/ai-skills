@@ -298,12 +298,6 @@ Every file touched in the MR/PR must be syntactically valid for its type. Invali
 - CSS: valid syntax, matching braces
 - JS / TS: no syntax errors
 
-### Findings by level (Blocking, Important, Suggestion, Minor, Attention Required)
-
-**From rules**: The level comes from the tag at the end of each rule in the reference files. Apply the loaded references contextually.
-
-**Attention Required**: Add when you cannot reliably verify (complex visual, nuanced logic, ambiguous specs). No reference rule uses this tag — you add it based on the diff.
-
 ### Highlights & verdict
 
 - **Highlights**: Systematically look for one thing done well (clean naming, elegant logic, good test coverage). Positive reinforcement builds trust between the architect (AI) and the developer
@@ -337,9 +331,7 @@ Every file touched in the MR/PR must be syntactically valid for its type. Invali
 - `[file]`: code hygiene (log, newline, imports — see references)
 ```
 
-### Writing rules
-
-Apply the formatting rules (Reference loading). Core principle: feedback must target only code in the diff (see Source of truth above).
+Apply formatting rules (Reference loading). Feedback must target only code in the diff (see Source of truth).
 
 ## Notes
 
@@ -356,7 +348,7 @@ When posting comments on the MR/PR:
 1. **Phase 3 concision**: Comments posted on the MR/PR must follow the same concision rule — max 2 short sentences, 15–20 words per sentence, never more than 2 lines per comment; issue + direct consequence only.
 2. Prefer general/overview notes (`create_workitem_note` or equivalent) over fragile inline thread replies — post feedback at the file level or as a comment on the MR/PR overview when code suggestions are involved.
 3. Always be constructive — suggest fixes, don't just point out problems
-4. Provide code corrections in standard markdown blocks (see Writing rules); avoid line-targeted suggestion blocks that break across platforms
+4. Provide code corrections in standard markdown blocks (Reference loading); avoid line-targeted suggestion blocks that break across platforms
 5. Keep a respectful and collaborative tone
 6. **Do not create a thread/note on pipeline status** — status stays in the report header only
 7. **AI disclosure (mandatory)** — append to each posted comment: `---` then `*AI-assisted review (skill frontend-code-review)*`
