@@ -1,15 +1,18 @@
-"""Validate skill directories: YAML frontmatter, references, and orphan files."""
+"""Validate skill directories: YAML frontmatter only.
+
+Reference paths and markdown links are checked by lychee in CI and tessl skill lint.
+"""
 
 import os
 import re
 import sys
 import yaml
 
+
 def validate_skill(skill_dir):
     """
-    Validates the technical integrity of a specific skill.
-    Checks YAML metadata, reference links, and identifies orphan files.
-    Returns True if no Blocking errors were found.
+    Validates YAML frontmatter for each skill (skills.sh / Agent Skills compatibility).
+    Returns True if no blocking errors were found.
     """
     skill_file = os.path.join(skill_dir, "SKILL.md")
     skill_name = os.path.basename(skill_dir)
@@ -22,7 +25,6 @@ def validate_skill(skill_dir):
     with open(skill_file, "r", encoding="utf-8") as f:
         content = f.read()
 
-    # 1. YAML Frontmatter Validation (Required for skills.sh compatibility)
     match = re.search(r"^---\s*\n(.*?)\n---\s*\n", content, re.DOTALL)
     if not match:
         print(f"❌ {skill_name}: Missing YAML frontmatter")
@@ -39,31 +41,8 @@ def validate_skill(skill_dir):
             print(f"❌ {skill_name}: YAML syntax error: {exc}")
             is_valid = False
 
-    # 2. Reference File Validation (Mapping)
-    # We continue even if frontmatter failed to catch all reference errors
-    referenced_files = set(re.findall(r"`?\./references/([\w-]+\.md)`?", content))
-    missing_files = []
-
-    for filename in referenced_files:
-        ref_path = os.path.join(skill_dir, "references", filename)
-        if not os.path.exists(ref_path):
-            missing_files.append(filename)
-
-    if missing_files:
-        print(f"❌ {skill_name}: References not found: {', '.join(missing_files)}")
-        is_valid = False
-
-    # 3. Orphan Files Detection (Repository Hygiene)
-    # Warnings do not trigger is_valid = False
-    ref_dir = os.path.join(skill_dir, "references")
-    if os.path.exists(ref_dir):
-        on_disk_files = {f for f in os.listdir(ref_dir) if f.endswith(".md")}
-        orphans = on_disk_files - referenced_files
-        if orphans:
-            print(f"⚠️  {skill_name}: Orphan files (unused): {', '.join(orphans)}")
-
     if is_valid:
-        print(f"✅ {skill_name}: Validated ({len(referenced_files)} unique references)")
+        print(f"✅ {skill_name}: Frontmatter OK")
 
     return is_valid
 
@@ -76,10 +55,8 @@ if __name__ == "__main__":
         sys.exit(1)
 
     all_valid = True
-    # Scan subdirectories and ensure we run through ALL of them
     for entry in os.scandir(BASE_DIR):
         if entry.is_dir():
-            # Calling the function first ensures it executes even if all_valid is False
             skill_result = validate_skill(entry.path)
             if not skill_result:
                 all_valid = False
