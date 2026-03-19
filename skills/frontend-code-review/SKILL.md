@@ -13,7 +13,7 @@ tags:
 
 ## Overview
 
-Review agent that replicates a senior front-end engineer's code review methodology. Works with GitHub Pull Requests and GitLab Merge Requests. Every comment must earn its place: prevent real problems, teach patterns, save debugging time, or improve UX. If none of these apply, do not report it as a primary finding. Golden rule: when the project has a linter/formatter and CI pipeline, trust the tooling for formatting and style — focus human review on what tools cannot catch.
+Senior-level front-end code review for GitHub and GitLab MRs. Actionable feedback that prevents real problems, teaches patterns, saves debugging time, and improves UX — every finding earns its place. When the project uses a linter, formatter, and CI for style, defer to them; focus human review on semantics, architecture, and risks automation cannot catch.
 
 ## When to Use
 
@@ -33,7 +33,7 @@ When asked to review a MR/PR:
 4. Fetch MR/PR metadata (GitLab MCP `get_merge_request`, or GitHub equivalent)
 5. Fetch **full** diffs via MCP (all pages if paginated); build inventory of changed files (added / modified / deleted)
 6. Fetch pipeline/CI status
-7. Load relevant references based on changed file types (see Reference loading). Only what is in scope (Frontend, CI, server templates e.g. Twig) is reviewed; everything not listed in the tables below is out of scope.
+7. Load relevant references by changed file types (**Reference loading**).
 8. Apply the review checklist (Blocking → Important → Suggestion → Attention Required → Minor), using contextual analysis and duplication detection
 9. Format findings using the output template (Phase 1 — report in chat)
 10. Ask which findings to post (Phase 2), then post selected ones with AI mention (Phase 3)
@@ -80,9 +80,7 @@ Always the same flow — no mode to detect: (1) **Phase 1 (obligatory)** — Ana
   - **Added** (`new_file: true` or equivalent)
   - **Modified** (same path, not deleted)
   - **Deleted** (`deleted_file: true` or equivalent)
-- **Use the inventory** before drawing conclusions:
-  - To load references (by file type) and to detect orphan references (e.g. removed code still referenced elsewhere).
-  - Before claiming "file F was not updated": confirm whether F appears in the inventory as **modified**. If F is modified, the diff is the source of truth for its content; if F is not in the diff at all, read F from the **source branch** via MCP (see "Source of truth").
+- **Use the inventory** before conclusions that depend on what changed (which references to load, orphan references, whether a file was updated in the MR/PR). Full rules: **Source of truth: remote only** below.
 
 ### Large MR/PR handling
 
@@ -128,21 +126,21 @@ Load references **after** diffs are fetched, using the paths in the tables below
 
 **Reference index** — Purpose of each file:
 
-| File                                         | Purpose                                                                                          |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| [js-ts](references/js-ts.md)                 | JS/TS conventions, semantic naming, testability, DOM, events, class patterns                     |
-| [html](references/html.md)                   | Semantics, script loading, semantic HTML, W3C syntax                                             |
-| [css](references/css.md)                     | Detect convention from files, enforce consistency                                                |
-| [templates](references/templates.md)         | Server-side template conventions (e.g. Twig), includes, defaults                                 |
-| [accessibility](references/accessibility.md) | SVG a11y, focus management, ARIA                                                                 |
-| [security](references/security.md)           | XSS, third-party scripts, secrets, runtime risks                                                 |
-| [code-quality](references/code-quality.md)   | Error handling, performance, boundary conditions, SOLID principles                               |
-| [testing](references/testing.md)             | Test structure and conventions (framework-agnostic)                                              |
-| [architecture](references/architecture.md)   | Project structure & tooling, architecture principles (SOLID, SRP, DIP), SoC, coupling, data flow |
-| [ci-cd](references/ci-cd.md)                 | Pipeline, GitHub Actions, GitLab CI                                                              |
-| [assets](references/assets.md)               | Image format, size, SVG optimization, sprites                                                    |
-| [writing-rules](references/writing-rules.md) | Formatting rules for findings (concision, consequence, grouping, tone)                           |
-| [discovery](references/discovery.md)         | Step 0: project conventions, linter/formatter detection, convention profile, tooling calibration |
+| File                                         | Purpose                                 |
+| -------------------------------------------- | --------------------------------------- |
+| [js-ts](references/js-ts.md)                 | JS/TS, DOM, events, naming, testability |
+| [html](references/html.md)                   | Semantics, script loading, W3C syntax   |
+| [css](references/css.md)                     | Convention detection, consistency       |
+| [templates](references/templates.md)         | Twig, server-side includes, defaults    |
+| [accessibility](references/accessibility.md) | SVG a11y, focus, ARIA                   |
+| [security](references/security.md)           | XSS, scripts, secrets, runtime risks    |
+| [code-quality](references/code-quality.md)   | Errors, performance, SOLID              |
+| [testing](references/testing.md)             | Test structure, framework-agnostic      |
+| [architecture](references/architecture.md)   | Structure, SOLID, SoC, coupling         |
+| [ci-cd](references/ci-cd.md)                 | Pipeline, GitHub Actions, GitLab CI     |
+| [assets](references/assets.md)               | Images, SVG, sprites                    |
+| [writing-rules](references/writing-rules.md) | Formatting, concision, tone             |
+| [discovery](references/discovery.md)         | Conventions, linter/formatter, tooling  |
 
 ### Source of truth: remote only (no local workspace)
 
@@ -210,11 +208,11 @@ The diff alone is not always enough. When a change seems ambiguous or the surrou
 - Only flag if the deletion introduces a bug, regression, or architectural break (e.g. removing a function still used elsewhere)
 - Flag if the deletion leaves orphaned code or broken references (e.g. a file still referencing removed code).
 
-**When checking for orphan references** (e.g. "file F still references the removed code"): use your **full diff inventory** first. If F is **modified** in the MR/PR, the diff is the source of truth — the update may already be there. If F is not in the diff, read F from the **source branch** via MCP (see "Source of truth").
+**Orphan references** after a deletion: combine the **full diff inventory** with **Source of truth: remote only** (MCP on the source branch; diff is authoritative when the file is in the MR/PR).
 
 Principle: deleted code will no longer exist after merge. Feedback must focus on what remains or on the impact of the deletion.
 
-See "Source of truth" above for the verify-before-asking-remove rule.
+See **Source of truth** for verify-before-asking-remove and false "missing update" rules.
 
 Do not flag issues on **unchanged code** (context only) unless Blocking (e.g. security vulnerability).
 
