@@ -20,12 +20,12 @@ Checklist for security review, adapted for front-end web projects. Focus on clie
 - Unknown or undocumented script attributes (`nowprocket`, `data-cfasync`, etc.). [Suggestion]
 - Vendor scripts with obfuscated/minified code committed directly (use CDN or npm package). [Suggestion]
 
-## Secrets & PII
+## Sensitive data & PII
 
-- PII, API keys, or auth tokens in `localStorage`, `sessionStorage`, or logs. [Blocking]
-- Auth tokens (JWT, session ID) in `localStorage` — prefer httpOnly cookies when backend controls auth. [Blocking]
+- PII or sensitive data in `localStorage`, `sessionStorage`, or logs. [Blocking]
+- Session identifiers in `localStorage` — prefer httpOnly cookies when backend controls auth. [Blocking]
 - Excessive logging of user data (PII in `console.log`). [Blocking]
-- Hardcoded environment-specific values (localhost URLs, staging API endpoints, test tokens). [Important]
+- Hardcoded environment-specific values (localhost URLs, staging API endpoints, sensitive test data). [Important]
 
 ## Supply chain & dependencies
 

@@ -22,7 +22,7 @@ Reference standards for JS/TS review. Only enforce rules that match the target p
 
 ## Code hygiene
 
-- `console.log` / `console.info` / `console.debug` containing PII or secrets. [Blocking]
+- `console.log` / `console.info` / `console.debug` containing PII or sensitive data. [Blocking]
 - `console.log` / `console.info` / `console.debug` (no PII) when linter does not catch them. [Minor]
 - Commented-out code left in place. [Minor]
 - Unused imports. [Minor]
