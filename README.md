@@ -6,14 +6,32 @@ This skill is part of the [yoriiis/ai-skills](https://github.com/yoriiis/ai-skil
 
 ---
 
+## 📦 Platforms & registries
+
+This skill is available on multiple agent skill ecosystems:
+
+| Platform           | Link                                                                                                                         |
+| :----------------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| **Agent Skills**   | [skills.sh/yoriiis/ai-skills/frontend-code-review](https://skills.sh/yoriiis/ai-skills/frontend-code-review)                 |
+| **Tessl Registry** | [tessl.io/registry/.../frontend-code-review](https://tessl.io/registry/skills/github/yoriiis/ai-skills/frontend-code-review) |
+
+---
+
 ## 🚀 Installation
 
-> [!IMPORTANT]
-> To add this specific skill to your local environment, run the following command:
->
-> ```bash
-> npx skills add yoriiis/ai-skills --skill frontend-code-review
-> ```
+Choose the command that matches your agent environment:
+
+### Agent Skills (skills.sh)
+
+```bash
+npx skills add yoriiis/ai-skills --skill frontend-code-review
+```
+
+### Tessl
+
+```bash
+tessl install https://github.com/yoriiis/ai-skills --skill frontend-code-review
+```
 
 ---
 
@@ -102,7 +120,7 @@ Once installed, simply ask your agent to review a specific PR or MR:
 "Review this PR: https://github.com/owner/repo/pull/123"
 ```
 
-Learn more about the open agent skills ecosystem at [skills.sh](https://skills.sh).
+Learn more: [skills.sh](https://skills.sh) | [Tessl Registry](https://tessl.io/registry)
 
 ---
 
