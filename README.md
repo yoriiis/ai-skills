@@ -10,10 +10,10 @@ This skill is part of the [yoriiis/ai-skills](https://github.com/yoriiis/ai-skil
 
 This skill is available on multiple agent skill ecosystems:
 
-| Platform           | Link                                                                                                                         |
-| :----------------- | :--------------------------------------------------------------------------------------------------------------------------- |
-| **Agent Skills**   | [skills.sh/yoriiis/ai-skills/frontend-code-review](https://skills.sh/yoriiis/ai-skills/frontend-code-review)                 |
-| **Tessl Registry** | [tessl.io/registry/.../frontend-code-review](https://tessl.io/registry/skills/github/yoriiis/ai-skills/frontend-code-review) |
+| Platform           | Link                                                                                                         |
+| :----------------- | :----------------------------------------------------------------------------------------------------------- |
+| **Agent Skills**   | [skills.sh/yoriiis/ai-skills/frontend-code-review](https://skills.sh/yoriiis/ai-skills/frontend-code-review) |
+| **Tessl Registry** | [tessl.io/registry/yoriiis/frontend-code-review](https://tessl.io/registry/yoriiis/frontend-code-review)     |
 
 ---
 
