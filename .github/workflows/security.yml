@@ -1,0 +1,33 @@
+name: Security
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  snyk-agent-scan:
+    name: Snyk Agent Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+
+      - name: Set up Python for tools
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Run Snyk Agent Scan on skill
+        run: uvx snyk-agent-scan@latest --skills ./skills/frontend-code-review
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
